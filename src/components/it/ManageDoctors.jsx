@@ -23,6 +23,7 @@ const ManageDoctors = () => {
     fetchDoctors();
   }, []);
 
+  // ✅ FETCH ONLY USERS WITH ROLE 'DOCTOR'
   const fetchDoctors = async () => {
     try {
       setLoading(true);
