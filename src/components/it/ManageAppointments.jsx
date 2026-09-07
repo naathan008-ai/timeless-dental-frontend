@@ -13,6 +13,7 @@ const ManageAppointments = () => {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
     client: '',
+    clientName: '',
     date: '',
     time: '',
     branch: 'westgate',
@@ -68,9 +69,14 @@ const ManageAppointments = () => {
 
   const handleAddAppointment = async (e) => {
     e.preventDefault();
+    if (!form.clientName) {
+      toast.error('Client Name is required');
+      return;
+    }
     try {
       await api.post('/api/appointments/book', {
-        client: form.client,
+        client: form.client || null,
+        clientName: form.clientName,
         date: form.date,
         time: form.time,
         branch: form.branch,
@@ -78,10 +84,19 @@ const ManageAppointments = () => {
       });
       toast.success('Appointment created');
       setShowModal(false);
-      setForm({ client: '', date: '', time: '', branch: 'westgate', notes: '' });
+      setForm({ client: '', clientName: '', date: '', time: '', branch: 'westgate', notes: '' });
       fetchAppointments();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Creation failed');
+    }
+  };
+
+  const handleClientSelect = (clientId) => {
+    const selected = clients.find(c => c._id === clientId);
+    if (selected) {
+      setForm({ ...form, client: clientId, clientName: selected.fullname });
+    } else {
+      setForm({ ...form, client: '', clientName: '' });
     }
   };
 
@@ -89,7 +104,7 @@ const ManageAppointments = () => {
     if (filter !== 'all' && a.status !== filter) return false;
     if (search) {
       const term = search.toLowerCase();
-      const client = a.client?.fullname?.toLowerCase() || '';
+      const client = (a.clientName || a.client?.fullname || a.client?.username || '').toLowerCase();
       return client.includes(term);
     }
     return true;
@@ -116,7 +131,7 @@ const ManageAppointments = () => {
         </select>
         <input
           type="text"
-          placeholder="Search client..."
+          placeholder="Search by client name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="input-field w-64"
@@ -128,7 +143,7 @@ const ManageAppointments = () => {
           <div key={apt._id} className="border-2 border-gray-200 rounded-lg p-4 hover:border-dental-red transition">
             <div className="flex flex-wrap justify-between items-start">
               <div>
-                <p className="font-semibold"><FaUser className="inline mr-2" /> {apt.client?.fullname || apt.client?.username}</p>
+                <p className="font-semibold"><FaUser className="inline mr-2" /> {apt.clientName || apt.client?.fullname || apt.client?.username || 'Unknown'}</p>
                 <p className="text-sm text-gray-600"><FaCalendar className="inline mr-1" /> {new Date(apt.date).toLocaleDateString()} <FaClock className="inline ml-2 mr-1" /> {apt.time}</p>
                 <p className="text-sm text-gray-600">Branch: {apt.branch}</p>
                 <span className={`badge ${apt.status === 'pending' ? 'badge-pending' : apt.status === 'approved' ? 'badge-approved' : apt.status === 'cancelled' ? 'badge-cancelled' : 'badge-completed'}`}>{apt.status}</span>
@@ -157,21 +172,31 @@ const ManageAppointments = () => {
       >
         <form onSubmit={handleAddAppointment} className="space-y-4">
           <div>
-            <label className="block font-medium">Client</label>
+            <label className="block font-medium">Existing Client (optional)</label>
             <select
               value={form.client}
-              onChange={(e) => setForm({...form, client: e.target.value})}
+              onChange={(e) => handleClientSelect(e.target.value)}
               className="input-field"
-              required
             >
-              <option value="">Select Client</option>
+              <option value="">Select existing client (optional)</option>
               {clients.map(c => (
                 <option key={c._id} value={c._id}>{c.fullname} ({c.username})</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block font-medium">Date</label>
+            <label className="block font-medium">Client Name <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              value={form.clientName}
+              onChange={(e) => setForm({...form, clientName: e.target.value})}
+              className="input-field"
+              placeholder="Enter client's full name"
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Date <span className="text-red-500">*</span></label>
             <input
               type="date"
               value={form.date}
@@ -181,7 +206,7 @@ const ManageAppointments = () => {
             />
           </div>
           <div>
-            <label className="block font-medium">Time</label>
+            <label className="block font-medium">Time <span className="text-red-500">*</span></label>
             <input
               type="time"
               value={form.time}
