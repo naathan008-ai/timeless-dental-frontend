@@ -6,7 +6,7 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900/95 backdrop-blur-sm text-white mt-20 border-t border-white/10">
+    <footer className="bg-gray-900/95 backdrop-blur-sm text-white mt-20 border-t border-white/10 relative z-10">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -16,7 +16,6 @@ const Footer = () => {
             </Link>
             <p className="text-gray-400 text-sm">Professional dental care in Harare. Your smile is our priority.</p>
             <div className="flex space-x-4 mt-4">
-              {/* Facebook – updated with your page */}
               <a
                 href="https://www.facebook.com/TimelessDentalClinic"
                 target="_blank"
@@ -26,7 +25,6 @@ const Footer = () => {
               >
                 <FaFacebook size={22} />
               </a>
-              {/* Instagram – updated with your handle */}
               <a
                 href="https://www.instagram.com/timeless_dental/"
                 target="_blank"
@@ -36,7 +34,6 @@ const Footer = () => {
               >
                 <FaInstagram size={22} />
               </a>
-              {/* Twitter – keep as placeholder, replace when needed */}
               <a
                 href="#"
                 target="_blank"
@@ -70,7 +67,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-red-400 mt-1" />
-                <span>timelessdentalclinic@gmail.com</span>
+                <span>info@timelessdental.com</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-red-400 mt-1" />

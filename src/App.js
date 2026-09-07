@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import PrivateRoute from './components/common/PrivateRoute';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import Home from './pages/Home';
 import About from './pages/About';
 import Dashboard from './pages/Dashboard';
@@ -29,7 +30,6 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        {/* Main container with subtle gradient background */}
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30">
           <Navbar />
           <main className="flex-grow container mx-auto px-4 py-6 animate-fade-in">
@@ -50,11 +50,31 @@ function App() {
 
               <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist','it']}><ReceptionDashboard /></PrivateRoute>} />
 
-              <Route path="/it/dashboard" element={<PrivateRoute roles={['it']}><ITDashboard /></PrivateRoute>} />
-              <Route path="/it/users" element={<PrivateRoute roles={['it']}><ManageUsers /></PrivateRoute>} />
-              <Route path="/it/doctors" element={<PrivateRoute roles={['it']}><ManageDoctors /></PrivateRoute>} />
-              <Route path="/it/appointments" element={<PrivateRoute roles={['it']}><ManageAppointments /></PrivateRoute>} />
-              <Route path="/it/activity" element={<PrivateRoute roles={['it']}><ActivityMonitor /></PrivateRoute>} />
+              <Route path="/it/dashboard" element={
+                <PrivateRoute roles={['it']}>
+                  <ErrorBoundary><ITDashboard /></ErrorBoundary>
+                </PrivateRoute>
+              } />
+              <Route path="/it/users" element={
+                <PrivateRoute roles={['it']}>
+                  <ErrorBoundary><ManageUsers /></ErrorBoundary>
+                </PrivateRoute>
+              } />
+              <Route path="/it/doctors" element={
+                <PrivateRoute roles={['it']}>
+                  <ErrorBoundary><ManageDoctors /></ErrorBoundary>
+                </PrivateRoute>
+              } />
+              <Route path="/it/appointments" element={
+                <PrivateRoute roles={['it']}>
+                  <ErrorBoundary><ManageAppointments /></ErrorBoundary>
+                </PrivateRoute>
+              } />
+              <Route path="/it/activity" element={
+                <PrivateRoute roles={['it']}>
+                  <ErrorBoundary><ActivityMonitor /></ErrorBoundary>
+                </PrivateRoute>
+              } />
 
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
