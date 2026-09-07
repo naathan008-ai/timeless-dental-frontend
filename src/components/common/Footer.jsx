@@ -12,7 +12,7 @@ const Footer = () => {
           <div>
             <Link to="/" className="flex items-center space-x-2 mb-4">
               <FaTooth className="text-red-400 text-2xl" />
-              <span className="text-xl font-bold text-red-400">Timeless Dental</span>
+              <span className="text-xl font-bold text-red-400">Timeless Dental Clinic</span>
             </Link>
             <p className="text-gray-400 text-sm">Professional dental care in Harare. Your smile is our priority.</p>
             <div className="flex space-x-4 mt-4">
@@ -67,7 +67,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-red-400 mt-1" />
-                <span>info@timelessdental.com</span>
+                <span>timelessdentalclinic@gmail.com</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-red-400 mt-1" />

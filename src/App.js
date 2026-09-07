@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/common/Navbar';
@@ -26,64 +27,77 @@ import Locations from './components/shared/Locations';
 import ContactUs from './components/shared/ContactUs';
 import './styles/global.css';
 
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30">
-          <Navbar />
-          <main className="flex-grow container mx-auto px-4 py-6 animate-fade-in">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
-              <Route path="/locations" element={<Locations />} />
-              <Route path="/contact" element={<ContactUs />} />
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30">
+            <Navbar />
+            <main className="flex-grow container mx-auto px-4 py-6 animate-fade-in">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="/locations" element={<Locations />} />
+                <Route path="/contact" element={<ContactUs />} />
 
-              <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-              <Route path="/appointments/book" element={<PrivateRoute roles={['client']}><BookAppointment /></PrivateRoute>} />
-              <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
-              <Route path="/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
+                <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+                <Route path="/appointments/book" element={<PrivateRoute roles={['client']}><BookAppointment /></PrivateRoute>} />
+                <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
+                <Route path="/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
 
-              <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist','it']}><ReceptionDashboard /></PrivateRoute>} />
+                <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist','it']}><ReceptionDashboard /></PrivateRoute>} />
 
-              <Route path="/it/dashboard" element={
-                <PrivateRoute roles={['it']}>
-                  <ErrorBoundary><ITDashboard /></ErrorBoundary>
-                </PrivateRoute>
-              } />
-              <Route path="/it/users" element={
-                <PrivateRoute roles={['it']}>
-                  <ErrorBoundary><ManageUsers /></ErrorBoundary>
-                </PrivateRoute>
-              } />
-              <Route path="/it/doctors" element={
-                <PrivateRoute roles={['it']}>
-                  <ErrorBoundary><ManageDoctors /></ErrorBoundary>
-                </PrivateRoute>
-              } />
-              <Route path="/it/appointments" element={
-                <PrivateRoute roles={['it']}>
-                  <ErrorBoundary><ManageAppointments /></ErrorBoundary>
-                </PrivateRoute>
-              } />
-              <Route path="/it/activity" element={
-                <PrivateRoute roles={['it']}>
-                  <ErrorBoundary><ActivityMonitor /></ErrorBoundary>
-                </PrivateRoute>
-              } />
+                <Route path="/it/dashboard" element={
+                  <PrivateRoute roles={['it']}>
+                    <ErrorBoundary><ITDashboard /></ErrorBoundary>
+                  </PrivateRoute>
+                } />
+                <Route path="/it/users" element={
+                  <PrivateRoute roles={['it']}>
+                    <ErrorBoundary><ManageUsers /></ErrorBoundary>
+                  </PrivateRoute>
+                } />
+                <Route path="/it/doctors" element={
+                  <PrivateRoute roles={['it']}>
+                    <ErrorBoundary><ManageDoctors /></ErrorBoundary>
+                  </PrivateRoute>
+                } />
+                <Route path="/it/appointments" element={
+                  <PrivateRoute roles={['it']}>
+                    <ErrorBoundary><ManageAppointments /></ErrorBoundary>
+                  </PrivateRoute>
+                } />
+                <Route path="/it/activity" element={
+                  <PrivateRoute roles={['it']}>
+                    <ErrorBoundary><ActivityMonitor /></ErrorBoundary>
+                  </PrivateRoute>
+                } />
 
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </main>
-          <Footer />
-          <Toaster position="top-right" toastOptions={{ className: 'rounded-2xl shadow-glass' }} />
-        </div>
-      </AuthProvider>
-    </BrowserRouter>
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </main>
+            <Footer />
+            <Toaster position="top-right" toastOptions={{ className: 'rounded-2xl shadow-glass' }} />
+          </div>
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

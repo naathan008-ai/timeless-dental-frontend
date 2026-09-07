@@ -28,7 +28,7 @@ const Navbar = () => {
               <FaTooth className="text-dental-red transition-transform duration-300 group-hover:scale-110" style={{ fontSize: '22px' }} />
             </div>
             <span className="text-2xl font-bold text-dental-red tracking-wide">
-              TIMELESS DENTAL
+              TIMELESS DENTAL CLINIC
             </span>
           </Link>
 
