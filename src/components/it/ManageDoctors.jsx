@@ -10,10 +10,12 @@ const ManageDoctors = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
+
   const [form, setForm] = useState({
     fullname: '',
     username: '',
     email: '',
+    idNumber: '',                // optional – backend will generate if empty
     specialization: '',
     workingHours: { start: '09:00', end: '16:00' },
     daysAvailable: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -23,7 +25,7 @@ const ManageDoctors = () => {
     fetchDoctors();
   }, []);
 
-  // ✅ FETCH ONLY USERS WITH ROLE 'DOCTOR'
+  // Fetch only users with role 'doctor'
   const fetchDoctors = async () => {
     try {
       setLoading(true);
@@ -41,11 +43,13 @@ const ManageDoctors = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Prepare payload – if idNumber is empty, backend will generate one
+      const payload = { ...form, role: 'doctor' };
       if (editing) {
-        await api.put(`/api/users/${editing._id}`, form);
+        await api.put(`/api/users/${editing._id}`, payload);
         toast.success('Doctor updated');
       } else {
-        await api.post('/api/users', { ...form, role: 'doctor' });
+        await api.post('/api/users', payload);
         toast.success('Doctor added');
       }
       setShowModal(false);
@@ -54,6 +58,7 @@ const ManageDoctors = () => {
         fullname: '',
         username: '',
         email: '',
+        idNumber: '',
         specialization: '',
         workingHours: { start: '09:00', end: '16:00' },
         daysAvailable: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -81,6 +86,7 @@ const ManageDoctors = () => {
       fullname: doctor.fullname || '',
       username: doctor.username || '',
       email: doctor.email || '',
+      idNumber: doctor.idNumber || '',
       specialization: doctor.specialization || '',
       workingHours: doctor.workingHours || { start: '09:00', end: '16:00' },
       daysAvailable: doctor.daysAvailable || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -114,6 +120,7 @@ const ManageDoctors = () => {
               fullname: '',
               username: '',
               email: '',
+              idNumber: '',
               specialization: '',
               workingHours: { start: '09:00', end: '16:00' },
               daysAvailable: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -136,6 +143,9 @@ const ManageDoctors = () => {
                 </h3>
                 <p className="text-sm text-gray-600">@{doctor.username}</p>
                 <p className="text-sm text-gray-600">{doctor.email}</p>
+                {doctor.idNumber && (
+                  <p className="text-sm text-gray-600">ID: {doctor.idNumber}</p>
+                )}
                 {doctor.specialization && (
                   <p className="text-sm text-gray-600">Specialization: {doctor.specialization}</p>
                 )}
@@ -171,37 +181,55 @@ const ManageDoctors = () => {
         title={editing ? 'Edit Doctor' : 'Add Doctor'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Full Name */}
           <input
             type="text"
-            placeholder="Full Name"
+            placeholder="Full Name *"
             value={form.fullname}
             onChange={(e) => setForm({...form, fullname: e.target.value})}
             className="input-field"
             required
           />
+
+          {/* Username */}
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Username *"
             value={form.username}
             onChange={(e) => setForm({...form, username: e.target.value})}
             className="input-field"
             required
           />
+
+          {/* Email */}
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email *"
             value={form.email}
             onChange={(e) => setForm({...form, email: e.target.value})}
             className="input-field"
             required
           />
+
+          {/* ID Number (optional) */}
           <input
             type="text"
-            placeholder="Specialization"
+            placeholder="ID Number (optional – auto‑generated if empty)"
+            value={form.idNumber}
+            onChange={(e) => setForm({...form, idNumber: e.target.value})}
+            className="input-field"
+          />
+
+          {/* Specialization */}
+          <input
+            type="text"
+            placeholder="Specialization (e.g., Orthodontist)"
             value={form.specialization}
             onChange={(e) => setForm({...form, specialization: e.target.value})}
             className="input-field"
           />
+
+          {/* Working Hours */}
           <div className="flex space-x-4">
             <input
               type="time"
@@ -222,25 +250,35 @@ const ManageDoctors = () => {
               className="input-field"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
-            {['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day => (
-              <button
-                key={day}
-                type="button"
-                onClick={() => toggleDay(day)}
-                className={`px-3 py-1 rounded-full text-sm ${
-                  form.daysAvailable.includes(day)
-                    ? 'bg-dental-red text-white'
-                    : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                {day}
-              </button>
-            ))}
+
+          {/* Days Available */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Days Available</label>
+            <div className="flex flex-wrap gap-2">
+              {['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day => (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => toggleDay(day)}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    form.daysAvailable.includes(day)
+                      ? 'bg-dental-red text-white'
+                      : 'bg-gray-200 text-gray-700'
+                  }`}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
           </div>
+
           <div className="flex space-x-4">
-            <button type="submit" className="flex-1 btn-primary">{editing ? 'Update' : 'Add'}</button>
-            <button type="button" onClick={() => setShowModal(false)} className="flex-1 btn-secondary">Cancel</button>
+            <button type="submit" className="flex-1 btn-primary">
+              {editing ? 'Update' : 'Add'}
+            </button>
+            <button type="button" onClick={() => setShowModal(false)} className="flex-1 btn-secondary">
+              Cancel
+            </button>
           </div>
         </form>
       </Modal>

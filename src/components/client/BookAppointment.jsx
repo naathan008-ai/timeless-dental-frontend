@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUser, FaUserMd } from 'react-icons/fa';
 
 const BookAppointment = () => {
   const { user } = useAuth();
@@ -12,11 +12,22 @@ const BookAppointment = () => {
   const [selectedTime, setSelectedTime] = useState('');
   const [loading, setLoading] = useState(false);
   const [appointments, setAppointments] = useState([]);
+  const [availableDoctors, setAvailableDoctors] = useState([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(false);
 
   useEffect(() => {
     if (date) fetchSlots();
     fetchAppointments();
   }, [date, branch]);
+
+  // Fetch available doctors when date, branch, and time are selected
+  useEffect(() => {
+    if (date && branch && selectedTime) {
+      fetchAvailableDoctors();
+    } else {
+      setAvailableDoctors([]);
+    }
+  }, [date, branch, selectedTime]);
 
   const fetchSlots = async () => {
     try {
@@ -36,6 +47,21 @@ const BookAppointment = () => {
     }
   };
 
+  const fetchAvailableDoctors = async () => {
+    try {
+      setLoadingDoctors(true);
+      const res = await api.get('/api/users/doctors/available', {
+        params: { date, time: selectedTime, branch },
+      });
+      setAvailableDoctors(res.data.availableDoctors);
+    } catch (err) {
+      toast.error('Failed to fetch available doctors');
+      setAvailableDoctors([]);
+    } finally {
+      setLoadingDoctors(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedTime) return toast.error('Select a time slot');
@@ -45,8 +71,8 @@ const BookAppointment = () => {
         date,
         time: selectedTime,
         branch,
-        clientName: user?.fullname, // send the user's fullname
-        notes: ''
+        clientName: user?.fullname,
+        notes: '',
       });
       toast.success('Appointment booked!');
       setSelectedTime('');
@@ -62,7 +88,7 @@ const BookAppointment = () => {
   const cancelAppointment = async (id) => {
     if (!window.confirm('Cancel this appointment?')) return;
     try {
-      await api.delete(`/api/appointments/${id}`);
+      await api.delete(`/api/appointments/${id}/cancel`);
       toast.success('Cancelled');
       fetchAppointments();
     } catch (err) {
@@ -128,6 +154,33 @@ const BookAppointment = () => {
                 {slots.length === 0 && <p className="text-gray-500 mt-2">No available slots for this date</p>}
               </div>
             )}
+
+            {/* Display available doctors (read-only) */}
+            {date && branch && selectedTime && (
+              <div className="mt-4">
+                <label className="block font-medium mb-2 flex items-center">
+                  <FaUserMd className="mr-2 text-dental-red" /> Available Doctors
+                </label>
+                {loadingDoctors ? (
+                  <div className="flex items-center space-x-2 text-gray-500">
+                    <div className="spinner w-4 h-4"></div>
+                    <span>Loading doctors...</span>
+                  </div>
+                ) : availableDoctors.length > 0 ? (
+                  <div className="space-y-2">
+                    {availableDoctors.map((doc) => (
+                      <div key={doc.id} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <p className="font-semibold">{doc.fullname}</p>
+                        <p className="text-sm text-gray-600">{doc.specialization}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">No doctors available at this time.</p>
+                )}
+              </div>
+            )}
+
             <button type="submit" disabled={loading || !selectedTime} className="w-full btn-primary disabled:opacity-50">
               {loading ? 'Booking...' : 'Confirm Appointment'}
             </button>
@@ -148,6 +201,9 @@ const BookAppointment = () => {
                       <p className="font-semibold text-gray-800">{apt.clientName || apt.client?.fullname || apt.client?.username}</p>
                       <p className="text-gray-600 text-sm">{new Date(apt.date).toLocaleDateString()} at {apt.time}</p>
                       <p className="text-gray-600 text-sm">Branch: {apt.branch}</p>
+                      {apt.doctor && (
+                        <p className="text-gray-600 text-sm">Doctor: {apt.doctor.fullname || apt.doctor.username}</p>
+                      )}
                       <span className={`badge ${apt.status === 'pending' ? 'badge-pending' : apt.status === 'approved' ? 'badge-approved' : apt.status === 'cancelled' ? 'badge-cancelled' : 'badge-completed'}`}>{apt.status}</span>
                     </div>
                     {apt.status !== 'cancelled' && apt.status !== 'completed' && (
