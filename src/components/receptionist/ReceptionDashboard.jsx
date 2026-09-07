@@ -5,6 +5,7 @@ import {
   FaTooth, FaCalendar, FaEnvelope, FaUser, FaClock,
   FaCheck, FaTimes, FaEye, FaTrash, FaPlus, FaFilter, FaSearch
 } from 'react-icons/fa';
+import Modal from '../common/Modal';
 
 const ReceptionDashboard = () => {
   const [activeTab, setActiveTab] = useState('appointments');
@@ -77,7 +78,6 @@ const ReceptionDashboard = () => {
     setStats(s);
   };
 
-  // ----- Appointment actions -----
   const updateStatus = async (id, status) => {
     if (!window.confirm(`Mark as ${status}?`)) return;
     try {
@@ -119,7 +119,6 @@ const ReceptionDashboard = () => {
     }
   };
 
-  // ----- Messages -----
   const markRead = async (id) => {
     try {
       await api.put(`/api/messages/${id}/read`);
@@ -129,7 +128,6 @@ const ReceptionDashboard = () => {
     }
   };
 
-  // ----- Filtering -----
   const filteredAppointments = appointments.filter(a => {
     if (filter !== 'all' && a.status !== filter) return false;
     if (search) {
@@ -272,74 +270,95 @@ const ReceptionDashboard = () => {
           </div>
         )}
 
-        {/* Appointment Details Modal */}
-        {showDetailsModal && selected && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-              <h3 className="text-2xl font-bold mb-4">Appointment Details</h3>
-              <div className="space-y-2">
-                <p><strong>Client:</strong> {selected.client?.fullname}</p>
-                <p><strong>Username:</strong> {selected.client?.username}</p>
-                <p><strong>ID:</strong> {selected.client?.idNumber}</p>
-                <p><strong>Email:</strong> {selected.client?.email}</p>
-                <p><strong>Date:</strong> {new Date(selected.date).toLocaleDateString()}</p>
-                <p><strong>Time:</strong> {selected.time}</p>
-                <p><strong>Branch:</strong> {selected.branch}</p>
-                <p><strong>Status:</strong> <span className={getStatusBadge(selected.status)}>{selected.status}</span></p>
-                {selected.notes && <p><strong>Notes:</strong> {selected.notes}</p>}
-              </div>
-              <button onClick={() => setShowDetailsModal(false)} className="mt-4 btn-secondary w-full">Close</button>
+        {/* Details Modal */}
+        <Modal
+          isOpen={showDetailsModal}
+          onClose={() => setShowDetailsModal(false)}
+          title="Appointment Details"
+        >
+          {selected && (
+            <div className="space-y-2">
+              <p><strong>Client:</strong> {selected.client?.fullname}</p>
+              <p><strong>Username:</strong> {selected.client?.username}</p>
+              <p><strong>ID:</strong> {selected.client?.idNumber}</p>
+              <p><strong>Email:</strong> {selected.client?.email}</p>
+              <p><strong>Date:</strong> {new Date(selected.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> {selected.time}</p>
+              <p><strong>Branch:</strong> {selected.branch}</p>
+              <p><strong>Status:</strong> <span className={getStatusBadge(selected.status)}>{selected.status}</span></p>
+              {selected.notes && <p><strong>Notes:</strong> {selected.notes}</p>}
             </div>
-          </div>
-        )}
+          )}
+          <button onClick={() => setShowDetailsModal(false)} className="mt-4 btn-secondary w-full">Close</button>
+        </Modal>
 
         {/* Add Appointment Modal */}
-        {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-              <h3 className="text-2xl font-bold mb-4">Add Appointment</h3>
-              <form onSubmit={handleAddAppointment} className="space-y-4">
-                <div>
-                  <label className="block font-medium">Client</label>
-                  <select
-                    value={form.client}
-                    onChange={(e) => setForm({...form, client: e.target.value})}
-                    className="input-field"
-                    required
-                  >
-                    <option value="">Select Client</option>
-                    {clients.map(c => (
-                      <option key={c._id} value={c._id}>{c.fullname} ({c.username})</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-medium">Date</label>
-                  <input type="date" value={form.date} onChange={(e) => setForm({...form, date: e.target.value})} className="input-field" required />
-                </div>
-                <div>
-                  <label className="block font-medium">Time</label>
-                  <input type="time" value={form.time} onChange={(e) => setForm({...form, time: e.target.value})} className="input-field" required />
-                </div>
-                <div>
-                  <label className="block font-medium">Branch</label>
-                  <select value={form.branch} onChange={(e) => setForm({...form, branch: e.target.value})} className="input-field">
-                    <option value="westgate">Westgate Mall</option>
-                    <option value="newlands">Newlands</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-medium">Notes</label>
-                  <textarea value={form.notes} onChange={(e) => setForm({...form, notes: e.target.value})} className="input-field" rows="2"></textarea>
-                </div>
-                <div className="flex space-x-4">
-                  <button type="submit" className="flex-1 btn-primary">Create</button>
-                  <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 btn-secondary">Cancel</button>
-                </div>
-              </form>
+        <Modal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          title="Add Appointment"
+        >
+          <form onSubmit={handleAddAppointment} className="space-y-4">
+            <div>
+              <label className="block font-medium">Client</label>
+              <select
+                value={form.client}
+                onChange={(e) => setForm({...form, client: e.target.value})}
+                className="input-field"
+                required
+              >
+                <option value="">Select Client</option>
+                {clients.map(c => (
+                  <option key={c._id} value={c._id}>{c.fullname} ({c.username})</option>
+                ))}
+              </select>
             </div>
-          </div>
-        )}
+            <div>
+              <label className="block font-medium">Date</label>
+              <input
+                type="date"
+                value={form.date}
+                onChange={(e) => setForm({...form, date: e.target.value})}
+                className="input-field"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Time</label>
+              <input
+                type="time"
+                value={form.time}
+                onChange={(e) => setForm({...form, time: e.target.value})}
+                className="input-field"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Branch</label>
+              <select
+                value={form.branch}
+                onChange={(e) => setForm({...form, branch: e.target.value})}
+                className="input-field"
+              >
+                <option value="westgate">Westgate Mall</option>
+                <option value="newlands">Newlands</option>
+              </select>
+            </div>
+            <div>
+              <label className="block font-medium">Notes</label>
+              <textarea
+                value={form.notes}
+                onChange={(e) => setForm({...form, notes: e.target.value})}
+                className="input-field"
+                rows="2"
+              />
+            </div>
+            <div className="flex space-x-4">
+              <button type="submit" className="flex-1 btn-primary">Create</button>
+              <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 btn-secondary">Cancel</button>
+            </div>
+          </form>
+        </Modal>
       </div>
     </div>
   );

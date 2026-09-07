@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { FaCalendar, FaClock, FaUser, FaCheck, FaTimes, FaTrash, FaPlus } from 'react-icons/fa';
+import Modal from '../common/Modal';
 
 const ManageAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -104,6 +105,7 @@ const ManageAppointments = () => {
           <FaPlus className="mr-2" /> Add Appointment
         </button>
       </div>
+
       <div className="flex flex-wrap gap-4 mb-4">
         <select value={filter} onChange={(e) => setFilter(e.target.value)} className="input-field w-40">
           <option value="all">All</option>
@@ -112,8 +114,15 @@ const ManageAppointments = () => {
           <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
         </select>
-        <input type="text" placeholder="Search client..." value={search} onChange={(e) => setSearch(e.target.value)} className="input-field w-64" />
+        <input
+          type="text"
+          placeholder="Search client..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="input-field w-64"
+        />
       </div>
+
       <div className="space-y-3 max-h-[600px] overflow-y-auto">
         {filtered.map((apt) => (
           <div key={apt._id} className="border-2 border-gray-200 rounded-lg p-4 hover:border-dental-red transition">
@@ -141,48 +150,72 @@ const ManageAppointments = () => {
         ))}
       </div>
 
-      {/* Add Appointment Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold mb-4">Add Appointment</h3>
-            <form onSubmit={handleAddAppointment} className="space-y-4">
-              <div>
-                <label className="block font-medium">Client</label>
-                <select value={form.client} onChange={(e) => setForm({...form, client: e.target.value})} className="input-field" required>
-                  <option value="">Select Client</option>
-                  {clients.map(c => (
-                    <option key={c._id} value={c._id}>{c.fullname} ({c.username})</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block font-medium">Date</label>
-                <input type="date" value={form.date} onChange={(e) => setForm({...form, date: e.target.value})} className="input-field" required />
-              </div>
-              <div>
-                <label className="block font-medium">Time</label>
-                <input type="time" value={form.time} onChange={(e) => setForm({...form, time: e.target.value})} className="input-field" required />
-              </div>
-              <div>
-                <label className="block font-medium">Branch</label>
-                <select value={form.branch} onChange={(e) => setForm({...form, branch: e.target.value})} className="input-field">
-                  <option value="westgate">Westgate Mall</option>
-                  <option value="newlands">Newlands</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-medium">Notes</label>
-                <textarea value={form.notes} onChange={(e) => setForm({...form, notes: e.target.value})} className="input-field" rows="2"></textarea>
-              </div>
-              <div className="flex space-x-4">
-                <button type="submit" className="flex-1 btn-primary">Create</button>
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 btn-secondary">Cancel</button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Add Appointment"
+      >
+        <form onSubmit={handleAddAppointment} className="space-y-4">
+          <div>
+            <label className="block font-medium">Client</label>
+            <select
+              value={form.client}
+              onChange={(e) => setForm({...form, client: e.target.value})}
+              className="input-field"
+              required
+            >
+              <option value="">Select Client</option>
+              {clients.map(c => (
+                <option key={c._id} value={c._id}>{c.fullname} ({c.username})</option>
+              ))}
+            </select>
           </div>
-        </div>
-      )}
+          <div>
+            <label className="block font-medium">Date</label>
+            <input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm({...form, date: e.target.value})}
+              className="input-field"
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Time</label>
+            <input
+              type="time"
+              value={form.time}
+              onChange={(e) => setForm({...form, time: e.target.value})}
+              className="input-field"
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Branch</label>
+            <select
+              value={form.branch}
+              onChange={(e) => setForm({...form, branch: e.target.value})}
+              className="input-field"
+            >
+              <option value="westgate">Westgate Mall</option>
+              <option value="newlands">Newlands</option>
+            </select>
+          </div>
+          <div>
+            <label className="block font-medium">Notes</label>
+            <textarea
+              value={form.notes}
+              onChange={(e) => setForm({...form, notes: e.target.value})}
+              className="input-field"
+              rows="2"
+            />
+          </div>
+          <div className="flex space-x-4">
+            <button type="submit" className="flex-1 btn-primary">Create</button>
+            <button type="button" onClick={() => setShowModal(false)} className="flex-1 btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };
