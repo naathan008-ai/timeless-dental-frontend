@@ -69,14 +69,14 @@ const ManageAppointments = () => {
 
   const handleAddAppointment = async (e) => {
     e.preventDefault();
-    if (!form.clientName) {
+    if (!form.clientName.trim()) {
       toast.error('Client Name is required');
       return;
     }
     try {
       await api.post('/api/appointments/book', {
         client: form.client || null,
-        clientName: form.clientName,
+        clientName: form.clientName.trim(),
         date: form.date,
         time: form.time,
         branch: form.branch,
@@ -92,6 +92,10 @@ const ManageAppointments = () => {
   };
 
   const handleClientSelect = (clientId) => {
+    if (!clientId) {
+      setForm({ ...form, client: '', clientName: '' });
+      return;
+    }
     const selected = clients.find(c => c._id === clientId);
     if (selected) {
       setForm({ ...form, client: clientId, clientName: selected.fullname });
@@ -194,6 +198,7 @@ const ManageAppointments = () => {
               placeholder="Enter client's full name"
               required
             />
+            <p className="text-xs text-gray-500 mt-1">If you select a client above, their name will auto-fill here.</p>
           </div>
           <div>
             <label className="block font-medium">Date <span className="text-red-500">*</span></label>
