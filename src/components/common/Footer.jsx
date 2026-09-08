@@ -73,6 +73,10 @@ const Footer = () => {
                 <FaMapMarkerAlt className="text-red-400 mt-1" />
                 <span>Westgate Mall, Harare</span>
               </li>
+              <li className="flex items-start space-x-3">
+                <FaMapMarkerAlt className="text-red-400 mt-1" />
+                <span>Newlands Shopping Centre, Harare</span>
+              </li>
             </ul>
           </div>
 

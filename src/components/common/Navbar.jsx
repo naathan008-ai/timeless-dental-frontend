@@ -28,7 +28,7 @@ const Navbar = () => {
               <FaTooth className="text-dental-red transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" style={{ fontSize: '34px' }} />
             </div>
             <span className="text-3xl md:text-4xl font-bold text-dental-red tracking-wider group-hover:tracking-widest transition-all duration-300">
-              TIMELESS DENTAL
+              TIMELESS DENTAL CLINIC
             </span>
           </Link>
 
@@ -111,7 +111,7 @@ const Navbar = () => {
                       My Appointments
                     </Link>
                     <Link to="/ai-chat" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
-                      <RiRobotLine className="inline mr-3 text-xl" /> AI Assistant
+                      <RiRobotLine className="inline mr-3 text-xl" /> AI CHAT
                     </Link>
                   </>
                 )}
