@@ -52,7 +52,7 @@ const Navbar = () => {
                   </Link>
                 )}
                 <Link to="/ai-chat" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
-                  <RiRobotLine className="mr-2 text-xl" /> AI Assistant
+                  <RiRobotLine className="mr-2 text-xl" /> AI Chat
                 </Link>
                 <Link to="/services" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
                   <RiServiceLine className="mr-2 text-xl" /> Services
@@ -77,7 +77,7 @@ const Navbar = () => {
                 <Link to="/" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium"><FaHome className="mr-2" /> Home</Link>
                 {/* ✅ AI Assistant link for guests too */}
                 <Link to="/ai-chat" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
-                  <RiRobotLine className="mr-2 text-xl" /> AI Assistant
+                  <RiRobotLine className="mr-2 text-xl" /> AI Chat
                 </Link>
                 <Link to="/services" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
                   <RiServiceLine className="mr-2 text-xl" /> Services
@@ -128,7 +128,7 @@ const Navbar = () => {
                   </Link>
                 )}
                 <Link to="/ai-chat" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
-                  <RiRobotLine className="inline mr-3 text-xl" /> AI Assistant
+                  <RiRobotLine className="inline mr-3 text-xl" /> AI Chat
                 </Link>
                 <Link to="/services" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
                   <RiServiceLine className="inline mr-3 text-xl" /> Services
@@ -145,7 +145,7 @@ const Navbar = () => {
               <div className="space-y-5">
                 <Link to="/" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>Home</Link>
                 <Link to="/ai-chat" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
-                  <RiRobotLine className="inline mr-3 text-xl" /> AI Assistant
+                  <RiRobotLine className="inline mr-3 text-xl" /> AI Chat
                 </Link>
                 <Link to="/services" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
                   <RiServiceLine className="inline mr-3 text-xl" /> Services

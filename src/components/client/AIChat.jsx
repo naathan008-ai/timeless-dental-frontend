@@ -185,7 +185,7 @@ const AIChat = () => {
           <FaTooth className="text-red-600 text-xl mt-1" />
           <div className="text-sm text-red-800">
             <p className="font-semibold">💡 Emergency Notice</p>
-            <p>For dental emergencies, call <strong>+263 71 2345678</strong> immediately.</p>
+            <p>For dental emergencies, call <strong> (024)2333271</strong> immediately.</p>
           </div>
         </div>
       </div>
