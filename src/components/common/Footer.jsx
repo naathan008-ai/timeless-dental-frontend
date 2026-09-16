@@ -12,7 +12,7 @@ const Footer = () => {
           <div>
             <Link to="/" className="flex items-center space-x-2 mb-4">
               <FaTooth className="text-red-400 text-2xl" />
-              <span className="text-xl font-bold text-red-400">Timeless Dental Clinic</span>
+              <span className="text-xl font-bold text-red-400">Timeless Dental</span>
             </Link>
             <p className="text-gray-400 text-sm">Professional dental care in Harare. Your smile is our priority.</p>
             <div className="flex space-x-4 mt-4">
@@ -50,6 +50,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-gray-400">
               <li><Link to="/" className="hover:text-red-400 transition">Home</Link></li>
+              <li><Link to="/services" className="hover:text-red-400 transition">Our Services</Link></li>
               <li><Link to="/appointments/book" className="hover:text-red-400 transition">Book Appointment</Link></li>
               <li><Link to="/appointments/view" className="hover:text-red-400 transition">My Appointments</Link></li>
               <li><Link to="/ai-chat" className="hover:text-red-400 transition">AI Chat</Link></li>
@@ -67,15 +68,11 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-red-400 mt-1" />
-                <span>timelessdentalclinic@gmail.com</span>
+                <span>info@timelessdental.com</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-red-400 mt-1" />
                 <span>Westgate Mall, Harare</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <FaMapMarkerAlt className="text-red-400 mt-1" />
-                <span>Newlands Shopping Centre, Harare</span>
               </li>
             </ul>
           </div>

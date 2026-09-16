@@ -9,6 +9,7 @@ import PrivateRoute from './components/common/PrivateRoute';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Home from './pages/Home';
 import About from './pages/About';
+import Services from './pages/Services';
 import Dashboard from './pages/Dashboard';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -27,11 +28,10 @@ import Locations from './components/shared/Locations';
 import ContactUs from './components/shared/ContactUs';
 import './styles/global.css';
 
-// Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
       retry: 1,
     },
@@ -49,6 +49,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/services" element={<Services />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -56,10 +57,12 @@ function App() {
                 <Route path="/locations" element={<Locations />} />
                 <Route path="/contact" element={<ContactUs />} />
 
+                {/* ✅ AI Chat is now PUBLIC – no login required */}
+                <Route path="/ai-chat" element={<AIChat />} />
+
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                 <Route path="/appointments/book" element={<PrivateRoute roles={['client']}><BookAppointment /></PrivateRoute>} />
                 <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
-                <Route path="/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
 
                 <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist','it']}><ReceptionDashboard /></PrivateRoute>} />
 

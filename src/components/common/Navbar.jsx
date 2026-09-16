@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaUser, FaSignOutAlt, FaHome, FaBars, FaTimes, FaTooth } from 'react-icons/fa';
-import { RiCalendarCheckLine, RiRobotLine, RiMessage2Line } from 'react-icons/ri';
+import { RiCalendarCheckLine, RiRobotLine, RiMessage2Line, RiServiceLine } from 'react-icons/ri';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated, isClient, isReceptionist, isIT } = useAuth();
@@ -19,7 +19,7 @@ const Navbar = () => {
     <nav className="bg-white/80 backdrop-blur-md shadow-glass sticky top-0 z-50 border-b border-white/20 rounded-b-4xl transition-all duration-500 hover:shadow-2xl">
       <div className="container mx-auto px-6 py-8">
         <div className="flex justify-between items-center">
-          {/* Logo - bigger teeth and text */}
+          {/* Logo */}
           <Link to="/" className="flex items-center space-x-5 group" onClick={() => setMenuOpen(false)}>
             <div className="flex items-center space-x-1 group-hover:scale-105 transition-transform duration-300">
               <FaTooth className="text-dental-red transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" style={{ fontSize: '28px' }} />
@@ -28,12 +28,12 @@ const Navbar = () => {
               <FaTooth className="text-dental-red transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" style={{ fontSize: '34px' }} />
             </div>
             <span className="text-3xl md:text-4xl font-bold text-dental-red tracking-wider group-hover:tracking-widest transition-all duration-300">
-              TIMELESS DENTAL CLINIC
+              TIMELESS DENTAL
             </span>
           </Link>
 
-          {/* Desktop Menu - bigger spacing and font */}
-          <div className="hidden md:flex items-center space-x-10 text-lg">
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8 text-lg">
             {isAuthenticated ? (
               <>
                 {isClient && (
@@ -44,9 +44,6 @@ const Navbar = () => {
                     <Link to="/appointments/view" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 font-medium">
                       My Appointments
                     </Link>
-                    <Link to="/ai-chat" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
-                      <RiRobotLine className="mr-2 text-xl" /> AI Assistant
-                    </Link>
                   </>
                 )}
                 {(isReceptionist || isIT) && (
@@ -54,16 +51,22 @@ const Navbar = () => {
                     Dashboard
                   </Link>
                 )}
+                <Link to="/ai-chat" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
+                  <RiRobotLine className="mr-2 text-xl" /> AI Assistant
+                </Link>
+                <Link to="/services" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
+                  <RiServiceLine className="mr-2 text-xl" /> Services
+                </Link>
                 <Link to="/locations" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 font-medium">Locations</Link>
                 <Link to="/contact" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
                   <RiMessage2Line className="mr-2 text-xl" /> Contact
                 </Link>
-                <div className="flex items-center space-x-5 border-l-2 border-gray-200/50 pl-5">
-                  <div className="w-12 h-12 bg-gradient-to-br from-red-100 to-red-50 rounded-full flex items-center justify-center shadow-inner hover:shadow-glow transition-all duration-300">
-                    <FaUser className="text-dental-red text-2xl" />
+                <div className="flex items-center space-x-4 border-l-2 border-gray-200/50 pl-4">
+                  <div className="w-11 h-11 bg-gradient-to-br from-red-100 to-red-50 rounded-full flex items-center justify-center shadow-inner hover:shadow-glow transition-all duration-300">
+                    <FaUser className="text-dental-red text-xl" />
                   </div>
                   <span className="text-gray-700 font-medium text-lg">{user?.username}</span>
-                  <span className="text-sm bg-gray-200/80 backdrop-blur-sm text-gray-600 px-4 py-1.5 rounded-full capitalize font-medium">{user?.role}</span>
+                  <span className="text-sm bg-gray-200/80 backdrop-blur-sm text-gray-600 px-3 py-1.5 rounded-full capitalize font-medium">{user?.role}</span>
                 </div>
                 <button onClick={handleLogout} className="flex items-center space-x-2 text-red-600 hover:text-red-700 transition-all duration-300 hover:scale-105 font-medium text-lg">
                   <FaSignOutAlt /><span>Logout</span>
@@ -72,6 +75,13 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium"><FaHome className="mr-2" /> Home</Link>
+                {/* ✅ AI Assistant link for guests too */}
+                <Link to="/ai-chat" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
+                  <RiRobotLine className="mr-2 text-xl" /> AI Assistant
+                </Link>
+                <Link to="/services" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
+                  <RiServiceLine className="mr-2 text-xl" /> Services
+                </Link>
                 <Link to="/locations" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 font-medium">Locations</Link>
                 <Link to="/contact" className="text-gray-700 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium">
                   <RiMessage2Line className="mr-2 text-xl" /> Contact
@@ -110,9 +120,6 @@ const Navbar = () => {
                     <Link to="/appointments/view" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
                       My Appointments
                     </Link>
-                    <Link to="/ai-chat" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
-                      <RiRobotLine className="inline mr-3 text-xl" /> AI CHAT
-                    </Link>
                   </>
                 )}
                 {(isReceptionist || isIT) && (
@@ -120,6 +127,12 @@ const Navbar = () => {
                     Dashboard
                   </Link>
                 )}
+                <Link to="/ai-chat" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
+                  <RiRobotLine className="inline mr-3 text-xl" /> AI Assistant
+                </Link>
+                <Link to="/services" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
+                  <RiServiceLine className="inline mr-3 text-xl" /> Services
+                </Link>
                 <Link to="/locations" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>Locations</Link>
                 <Link to="/contact" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
                   <RiMessage2Line className="inline mr-3 text-xl" /> Contact
@@ -131,6 +144,12 @@ const Navbar = () => {
             ) : (
               <div className="space-y-5">
                 <Link to="/" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>Home</Link>
+                <Link to="/ai-chat" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
+                  <RiRobotLine className="inline mr-3 text-xl" /> AI Assistant
+                </Link>
+                <Link to="/services" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
+                  <RiServiceLine className="inline mr-3 text-xl" /> Services
+                </Link>
                 <Link to="/locations" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>Locations</Link>
                 <Link to="/contact" className="block px-4 py-4 text-gray-700 hover:bg-red-50 hover:text-dental-red rounded-2xl transition-all duration-300 hover:scale-105 text-lg" onClick={() => setMenuOpen(false)}>
                   <RiMessage2Line className="inline mr-3 text-xl" /> Contact
