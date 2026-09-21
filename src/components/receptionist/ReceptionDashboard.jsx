@@ -4,10 +4,11 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 import {
   FaTooth, FaCalendar, FaEnvelope, FaUser, FaClock,
-  FaCheck, FaTimes, FaEye, FaTrash, FaPlus, FaFilter, FaSearch
+  FaCheck, FaTimes, FaEye, FaTrash, FaPlus, FaFilter, FaSearch, FaCalendarPlus
 } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import { StatsSkeleton, CardSkeleton } from '../common/Skeleton';
+import ManageSchedule from '../shared/ManageSchedule';
 
 // ========== API fetch functions ==========
 const fetchAppointments = async () => {
@@ -20,11 +21,10 @@ const fetchMessages = async () => {
 };
 const fetchClients = async () => {
   const { data } = await api.get('/api/users');
-  return data.filter(u => u.role === 'client');
+  return data.filter((u) => u.role === 'client');
 };
 
 const ReceptionDashboard = () => {
-  // ---------- State ----------
   const [activeTab, setActiveTab] = useState('appointments');
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
@@ -32,21 +32,20 @@ const ReceptionDashboard = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Add appointment form state
   const [form, setForm] = useState({
     client: '',
     clientName: '',
     date: '',
     time: '',
     branch: 'westgate',
-    notes: ''
+    notes: '',
   });
 
   // ---------- React Query ----------
   const appointmentsQuery = useQuery({
     queryKey: ['receptionAppointments'],
     queryFn: fetchAppointments,
-    staleTime: 1000 * 30, // 30 seconds
+    staleTime: 1000 * 30,
   });
 
   const messagesQuery = useQuery({
@@ -58,24 +57,25 @@ const ReceptionDashboard = () => {
   const clientsQuery = useQuery({
     queryKey: ['receptionClients'],
     queryFn: fetchClients,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 
   const appointments = appointmentsQuery.data || [];
   const messages = messagesQuery.data || [];
   const clients = clientsQuery.data || [];
 
-  const isLoading = appointmentsQuery.isLoading || messagesQuery.isLoading || clientsQuery.isLoading;
+  const isLoading =
+    appointmentsQuery.isLoading || messagesQuery.isLoading || clientsQuery.isLoading;
 
   // ---------- Stats ----------
   const stats = {
     total: appointments.length,
-    pending: appointments.filter(a => a.status === 'pending').length,
-    approved: appointments.filter(a => a.status === 'approved').length,
-    completed: appointments.filter(a => a.status === 'completed').length,
-    cancelled: appointments.filter(a => a.status === 'cancelled').length,
+    pending: appointments.filter((a) => a.status === 'pending').length,
+    approved: appointments.filter((a) => a.status === 'approved').length,
+    completed: appointments.filter((a) => a.status === 'completed').length,
+    cancelled: appointments.filter((a) => a.status === 'cancelled').length,
   };
-  const unreadCount = messages.filter(m => !m.isRead && !m.isFromReceptionist).length;
+  const unreadCount = messages.filter((m) => !m.isRead && !m.isFromReceptionist).length;
 
   // ---------- Handlers ----------
   const updateStatus = async (id, status) => {
@@ -109,13 +109,12 @@ const ReceptionDashboard = () => {
     }
   };
 
-  // ----- Add Appointment -----
   const handleClientSelect = (clientId) => {
     if (!clientId) {
       setForm({ ...form, client: '', clientName: '' });
       return;
     }
-    const selectedClient = clients.find(c => c._id === clientId);
+    const selectedClient = clients.find((c) => c._id === clientId);
     if (selectedClient) {
       setForm({ ...form, client: clientId, clientName: selectedClient.fullname });
     } else {
@@ -136,19 +135,25 @@ const ReceptionDashboard = () => {
         date: form.date,
         time: form.time,
         branch: form.branch,
-        notes: form.notes
+        notes: form.notes,
       });
       toast.success('Appointment created');
       setShowAddModal(false);
-      setForm({ client: '', clientName: '', date: '', time: '', branch: 'westgate', notes: '' });
+      setForm({
+        client: '',
+        clientName: '',
+        date: '',
+        time: '',
+        branch: 'westgate',
+        notes: '',
+      });
       appointmentsQuery.refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Creation failed');
     }
   };
 
-  // ---------- Filtered appointments ----------
-  const filteredAppointments = appointments.filter(a => {
+  const filteredAppointments = appointments.filter((a) => {
     if (filter !== 'all' && a.status !== filter) return false;
     if (search) {
       const term = search.toLowerCase();
@@ -158,18 +163,16 @@ const ReceptionDashboard = () => {
     return true;
   });
 
-  // ---------- UI helpers ----------
   const getStatusBadge = (status) => {
     const map = {
       pending: 'badge-pending',
       approved: 'badge-approved',
       cancelled: 'badge-cancelled',
-      completed: 'badge-completed'
+      completed: 'badge-completed',
     };
     return `badge ${map[status] || ''}`;
   };
 
-  // ---------- Loading & Error ----------
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -179,13 +182,6 @@ const ReceptionDashboard = () => {
           </h1>
           <StatsSkeleton />
           <div className="bg-white rounded-2xl shadow-xl p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex flex-wrap gap-4">
-                <div className="w-40 h-10 bg-gray-200 rounded animate-pulse"></div>
-                <div className="w-48 h-10 bg-gray-200 rounded animate-pulse"></div>
-              </div>
-              <div className="w-36 h-10 bg-gray-200 rounded animate-pulse"></div>
-            </div>
             <CardSkeleton count={3} />
           </div>
         </div>
@@ -197,7 +193,6 @@ const ReceptionDashboard = () => {
     return <div className="text-center py-8 text-red-600">Failed to load dashboard data</div>;
   }
 
-  // ---------- Render ----------
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-7xl mx-auto">
@@ -230,13 +225,11 @@ const ReceptionDashboard = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-4 mb-6">
+        <div className="flex space-x-4 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab('appointments')}
             className={`px-6 py-2 rounded-lg font-semibold ${
-              activeTab === 'appointments'
-                ? 'bg-dental-red text-white'
-                : 'bg-white text-gray-700'
+              activeTab === 'appointments' ? 'bg-dental-red text-white' : 'bg-white text-gray-700'
             }`}
           >
             <FaCalendar className="inline mr-2" /> Appointments
@@ -244,9 +237,7 @@ const ReceptionDashboard = () => {
           <button
             onClick={() => setActiveTab('messages')}
             className={`px-6 py-2 rounded-lg font-semibold ${
-              activeTab === 'messages'
-                ? 'bg-dental-red text-white'
-                : 'bg-white text-gray-700'
+              activeTab === 'messages' ? 'bg-dental-red text-white' : 'bg-white text-gray-700'
             }`}
           >
             <FaEnvelope className="inline mr-2" /> Messages
@@ -256,11 +247,19 @@ const ReceptionDashboard = () => {
               </span>
             )}
           </button>
+          <button
+            onClick={() => setActiveTab('schedule')}
+            className={`px-6 py-2 rounded-lg font-semibold ${
+              activeTab === 'schedule' ? 'bg-dental-red text-white' : 'bg-white text-gray-700'
+            }`}
+          >
+            <FaCalendarPlus className="inline mr-2" /> Schedule
+          </button>
         </div>
 
         {activeTab === 'appointments' ? (
           <div className="bg-white rounded-2xl shadow-xl p-6">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
               <div className="flex flex-wrap gap-4 items-center">
                 <div className="flex items-center space-x-2">
                   <FaFilter className="text-gray-500" />
@@ -317,6 +316,11 @@ const ReceptionDashboard = () => {
                           {apt.time}
                         </p>
                         <p className="text-sm text-gray-600">Branch: {apt.branch}</p>
+                        {apt.doctor && (
+                          <p className="text-sm text-gray-600">
+                            Doctor: {apt.doctor.fullname || apt.doctor.username}
+                          </p>
+                        )}
                         <span className={getStatusBadge(apt.status)}>{apt.status}</span>
                       </div>
                       <div className="flex space-x-2 mt-2 md:mt-0">
@@ -366,7 +370,7 @@ const ReceptionDashboard = () => {
               )}
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'messages' ? (
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {messages.length === 0 ? (
@@ -405,9 +409,11 @@ const ReceptionDashboard = () => {
               )}
             </div>
           </div>
+        ) : (
+          <ManageSchedule />
         )}
 
-        {/* ---------- Details Modal ---------- */}
+        {/* Details Modal */}
         <Modal
           isOpen={showDetailsModal}
           onClose={() => setShowDetailsModal(false)}
@@ -422,6 +428,9 @@ const ReceptionDashboard = () => {
               <p><strong>Date:</strong> {new Date(selected.date).toLocaleDateString()}</p>
               <p><strong>Time:</strong> {selected.time}</p>
               <p><strong>Branch:</strong> {selected.branch}</p>
+              {selected.doctor && (
+                <p><strong>Doctor:</strong> {selected.doctor.fullname || selected.doctor.username}</p>
+              )}
               <p><strong>Status:</strong> <span className={getStatusBadge(selected.status)}>{selected.status}</span></p>
               {selected.notes && <p><strong>Notes:</strong> {selected.notes}</p>}
             </div>
@@ -434,7 +443,7 @@ const ReceptionDashboard = () => {
           </button>
         </Modal>
 
-        {/* ---------- Add Appointment Modal ---------- */}
+        {/* Add Appointment Modal */}
         <Modal
           isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
@@ -449,7 +458,7 @@ const ReceptionDashboard = () => {
                 className="input-field"
               >
                 <option value="">Select existing client (optional)</option>
-                {clients.map(c => (
+                {clients.map((c) => (
                   <option key={c._id} value={c._id}>
                     {c.fullname} ({c.username})
                   </option>
@@ -457,35 +466,38 @@ const ReceptionDashboard = () => {
               </select>
             </div>
             <div>
-              <label className="block font-medium">Client Name <span className="text-red-500">*</span></label>
+              <label className="block font-medium">
+                Client Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={form.clientName}
-                onChange={(e) => setForm({...form, clientName: e.target.value})}
+                onChange={(e) => setForm({ ...form, clientName: e.target.value })}
                 className="input-field"
                 placeholder="Enter client's full name"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
-                If you select a client above, their name will auto‑fill here.
-              </p>
             </div>
             <div>
-              <label className="block font-medium">Date <span className="text-red-500">*</span></label>
+              <label className="block font-medium">
+                Date <span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 value={form.date}
-                onChange={(e) => setForm({...form, date: e.target.value})}
+                onChange={(e) => setForm({ ...form, date: e.target.value })}
                 className="input-field"
                 required
               />
             </div>
             <div>
-              <label className="block font-medium">Time <span className="text-red-500">*</span></label>
+              <label className="block font-medium">
+                Time <span className="text-red-500">*</span>
+              </label>
               <input
                 type="time"
                 value={form.time}
-                onChange={(e) => setForm({...form, time: e.target.value})}
+                onChange={(e) => setForm({ ...form, time: e.target.value })}
                 className="input-field"
                 required
               />
@@ -494,7 +506,7 @@ const ReceptionDashboard = () => {
               <label className="block font-medium">Branch</label>
               <select
                 value={form.branch}
-                onChange={(e) => setForm({...form, branch: e.target.value})}
+                onChange={(e) => setForm({ ...form, branch: e.target.value })}
                 className="input-field"
               >
                 <option value="westgate">Westgate Mall</option>
@@ -505,13 +517,15 @@ const ReceptionDashboard = () => {
               <label className="block font-medium">Notes</label>
               <textarea
                 value={form.notes}
-                onChange={(e) => setForm({...form, notes: e.target.value})}
+                onChange={(e) => setForm({ ...form, notes: e.target.value })}
                 className="input-field"
                 rows="2"
               />
             </div>
             <div className="flex space-x-4">
-              <button type="submit" className="flex-1 btn-primary">Create</button>
+              <button type="submit" className="flex-1 btn-primary">
+                Create
+              </button>
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}

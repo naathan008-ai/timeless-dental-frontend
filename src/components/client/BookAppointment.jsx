@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUser, FaUserMd } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUser, FaUserMd, FaCheckCircle } from 'react-icons/fa';
 
 const BookAppointment = () => {
   const { user } = useAuth();
@@ -20,7 +20,6 @@ const BookAppointment = () => {
     fetchAppointments();
   }, [date, branch]);
 
-  // Fetch available doctors when date, branch, and time are selected
   useEffect(() => {
     if (date && branch && selectedTime) {
       fetchAvailableDoctors();
@@ -50,7 +49,7 @@ const BookAppointment = () => {
   const fetchAvailableDoctors = async () => {
     try {
       setLoadingDoctors(true);
-      const res = await api.get('/api/users/doctors/available', {
+      const res = await api.get('/api/schedule/available-doctors', {
         params: { date, time: selectedTime, branch },
       });
       setAvailableDoctors(res.data.availableDoctors);
@@ -74,7 +73,7 @@ const BookAppointment = () => {
         clientName: user?.fullname,
         notes: '',
       });
-      toast.success('Appointment booked!');
+      toast.success('Appointment booked! A doctor will be assigned automatically.');
       setSelectedTime('');
       fetchSlots();
       fetchAppointments();
@@ -106,7 +105,9 @@ const BookAppointment = () => {
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block font-medium mb-2"><FaUser className="inline mr-2 text-dental-red" /> Client</label>
+              <label className="block font-medium mb-2">
+                <FaUser className="inline mr-2 text-dental-red" /> Client
+              </label>
               <input
                 type="text"
                 value={user?.fullname || user?.username || ''}
@@ -115,7 +116,9 @@ const BookAppointment = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-2"><FaCalendar className="inline mr-2 text-dental-red" /> Date</label>
+              <label className="block font-medium mb-2">
+                <FaCalendar className="inline mr-2 text-dental-red" /> Date
+              </label>
               <input
                 type="date"
                 value={date}
@@ -126,15 +129,23 @@ const BookAppointment = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-2"><FaMapMarkerAlt className="inline mr-2 text-dental-red" /> Branch</label>
-              <select value={branch} onChange={(e) => setBranch(e.target.value)} className="input-field">
+              <label className="block font-medium mb-2">
+                <FaMapMarkerAlt className="inline mr-2 text-dental-red" /> Branch
+              </label>
+              <select
+                value={branch}
+                onChange={(e) => setBranch(e.target.value)}
+                className="input-field"
+              >
                 <option value="westgate">Westgate Mall</option>
                 <option value="newlands">Newlands Shopping Centre</option>
               </select>
             </div>
             {date && (
               <div>
-                <label className="block font-medium mb-2"><FaClock className="inline mr-2 text-dental-red" /> Available Times</label>
+                <label className="block font-medium mb-2">
+                  <FaClock className="inline mr-2 text-dental-red" /> Available Times
+                </label>
                 <div className="grid grid-cols-4 gap-2">
                   {slots.map((slot) => (
                     <button
@@ -151,11 +162,15 @@ const BookAppointment = () => {
                     </button>
                   ))}
                 </div>
-                {slots.length === 0 && <p className="text-gray-500 mt-2">No available slots for this date</p>}
+                {slots.length === 0 && (
+                  <p className="text-gray-500 mt-2">
+                    No doctors available at this branch on this date.
+                  </p>
+                )}
               </div>
             )}
 
-            {/* Display available doctors (read-only) */}
+            {/* Available doctors (read-only, auto-assign) */}
             {date && branch && selectedTime && (
               <div className="mt-4">
                 <label className="block font-medium mb-2 flex items-center">
@@ -167,21 +182,38 @@ const BookAppointment = () => {
                     <span>Loading doctors...</span>
                   </div>
                 ) : availableDoctors.length > 0 ? (
-                  <div className="space-y-2">
-                    {availableDoctors.map((doc) => (
-                      <div key={doc.id} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                        <p className="font-semibold">{doc.fullname}</p>
-                        <p className="text-sm text-gray-600">{doc.specialization}</p>
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <div className="space-y-2">
+                      {availableDoctors.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                        >
+                          <p className="font-semibold">{doc.fullname}</p>
+                          <p className="text-sm text-gray-600">{doc.specialization}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-green-700 bg-green-50 rounded p-2 mt-2 flex items-center">
+                      <FaCheckCircle className="mr-2" />
+                      {availableDoctors.length} doctor
+                      {availableDoctors.length > 1 ? 's' : ''} available — you'll be
+                      assigned automatically.
+                    </p>
+                  </>
                 ) : (
-                  <p className="text-gray-500 text-sm">No doctors available at this time.</p>
+                  <p className="text-gray-500 text-sm">
+                    No doctors available at this time.
+                  </p>
                 )}
               </div>
             )}
 
-            <button type="submit" disabled={loading || !selectedTime} className="w-full btn-primary disabled:opacity-50">
+            <button
+              type="submit"
+              disabled={loading || !selectedTime}
+              className="w-full btn-primary disabled:opacity-50"
+            >
               {loading ? 'Booking...' : 'Confirm Appointment'}
             </button>
           </form>
@@ -195,19 +227,43 @@ const BookAppointment = () => {
           ) : (
             <div className="space-y-4 max-h-[500px] overflow-y-auto">
               {appointments.map((apt) => (
-                <div key={apt._id} className="border-2 border-gray-200 rounded-lg p-4 hover:border-dental-red transition">
+                <div
+                  key={apt._id}
+                  className="border-2 border-gray-200 rounded-lg p-4 hover:border-dental-red transition"
+                >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-semibold text-gray-800">{apt.clientName || apt.client?.fullname || apt.client?.username}</p>
-                      <p className="text-gray-600 text-sm">{new Date(apt.date).toLocaleDateString()} at {apt.time}</p>
+                      <p className="font-semibold text-gray-800">
+                        {apt.clientName || apt.client?.fullname || apt.client?.username}
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        {new Date(apt.date).toLocaleDateString()} at {apt.time}
+                      </p>
                       <p className="text-gray-600 text-sm">Branch: {apt.branch}</p>
                       {apt.doctor && (
-                        <p className="text-gray-600 text-sm">Doctor: {apt.doctor.fullname || apt.doctor.username}</p>
+                        <p className="text-gray-600 text-sm">
+                          Doctor: {apt.doctor.fullname || apt.doctor.username}
+                        </p>
                       )}
-                      <span className={`badge ${apt.status === 'pending' ? 'badge-pending' : apt.status === 'approved' ? 'badge-approved' : apt.status === 'cancelled' ? 'badge-cancelled' : 'badge-completed'}`}>{apt.status}</span>
+                      <span
+                        className={`badge ${
+                          apt.status === 'pending'
+                            ? 'badge-pending'
+                            : apt.status === 'approved'
+                            ? 'badge-approved'
+                            : apt.status === 'cancelled'
+                            ? 'badge-cancelled'
+                            : 'badge-completed'
+                        }`}
+                      >
+                        {apt.status}
+                      </span>
                     </div>
                     {apt.status !== 'cancelled' && apt.status !== 'completed' && (
-                      <button onClick={() => cancelAppointment(apt._id)} className="text-red-600 hover:text-red-800">
+                      <button
+                        onClick={() => cancelAppointment(apt._id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
                         Cancel
                       </button>
                     )}

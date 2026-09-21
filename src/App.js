@@ -23,6 +23,7 @@ import ITDashboard from './components/it/ITDashboard';
 import ManageUsers from './components/it/ManageUsers';
 import ManageDoctors from './components/it/ManageDoctors';
 import ManageAppointments from './components/it/ManageAppointments';
+import ManageSchedule from './components/shared/ManageSchedule';
 import ActivityMonitor from './components/it/ActivityMonitor';
 import Locations from './components/shared/Locations';
 import ContactUs from './components/shared/ContactUs';
@@ -57,7 +58,7 @@ function App() {
                 <Route path="/locations" element={<Locations />} />
                 <Route path="/contact" element={<ContactUs />} />
 
-                {/* ✅ AI Chat is now PUBLIC – no login required */}
+                {/* AI Chat is public */}
                 <Route path="/ai-chat" element={<AIChat />} />
 
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
@@ -65,6 +66,11 @@ function App() {
                 <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
 
                 <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist','it']}><ReceptionDashboard /></PrivateRoute>} />
+                <Route path="/reception/schedule" element={
+                  <PrivateRoute roles={['receptionist','it']}>
+                    <ManageSchedule />
+                  </PrivateRoute>
+                } />
 
                 <Route path="/it/dashboard" element={
                   <PrivateRoute roles={['it']}>
@@ -84,6 +90,11 @@ function App() {
                 <Route path="/it/appointments" element={
                   <PrivateRoute roles={['it']}>
                     <ErrorBoundary><ManageAppointments /></ErrorBoundary>
+                  </PrivateRoute>
+                } />
+                <Route path="/it/schedule" element={
+                  <PrivateRoute roles={['it']}>
+                    <ErrorBoundary><ManageSchedule /></ErrorBoundary>
                   </PrivateRoute>
                 } />
                 <Route path="/it/activity" element={
