@@ -24,6 +24,8 @@ import ManageUsers from './components/it/ManageUsers';
 import ManageDoctors from './components/it/ManageDoctors';
 import ManageAppointments from './components/it/ManageAppointments';
 import ManageSchedule from './components/shared/ManageSchedule';
+import ManageClients from './components/shared/ManageClients';           // 👈 NEW
+import ClientDetails from './components/shared/ClientDetails';           // 👈 NEW
 import ActivityMonitor from './components/it/ActivityMonitor';
 import Locations from './components/shared/Locations';
 import ContactUs from './components/shared/ContactUs';
@@ -57,8 +59,6 @@ function App() {
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="/locations" element={<Locations />} />
                 <Route path="/contact" element={<ContactUs />} />
-
-                {/* AI Chat is public */}
                 <Route path="/ai-chat" element={<AIChat />} />
 
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
@@ -66,42 +66,19 @@ function App() {
                 <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
 
                 <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist','it']}><ReceptionDashboard /></PrivateRoute>} />
-                <Route path="/reception/schedule" element={
-                  <PrivateRoute roles={['receptionist','it']}>
-                    <ManageSchedule />
-                  </PrivateRoute>
-                } />
+                <Route path="/reception/schedule" element={<PrivateRoute roles={['receptionist','it']}><ManageSchedule /></PrivateRoute>} />
+                <Route path="/reception/clients" element={<PrivateRoute roles={['receptionist','it']}><ManageClients /></PrivateRoute>} />
 
-                <Route path="/it/dashboard" element={
-                  <PrivateRoute roles={['it']}>
-                    <ErrorBoundary><ITDashboard /></ErrorBoundary>
-                  </PrivateRoute>
-                } />
-                <Route path="/it/users" element={
-                  <PrivateRoute roles={['it']}>
-                    <ErrorBoundary><ManageUsers /></ErrorBoundary>
-                  </PrivateRoute>
-                } />
-                <Route path="/it/doctors" element={
-                  <PrivateRoute roles={['it']}>
-                    <ErrorBoundary><ManageDoctors /></ErrorBoundary>
-                  </PrivateRoute>
-                } />
-                <Route path="/it/appointments" element={
-                  <PrivateRoute roles={['it']}>
-                    <ErrorBoundary><ManageAppointments /></ErrorBoundary>
-                  </PrivateRoute>
-                } />
-                <Route path="/it/schedule" element={
-                  <PrivateRoute roles={['it']}>
-                    <ErrorBoundary><ManageSchedule /></ErrorBoundary>
-                  </PrivateRoute>
-                } />
-                <Route path="/it/activity" element={
-                  <PrivateRoute roles={['it']}>
-                    <ErrorBoundary><ActivityMonitor /></ErrorBoundary>
-                  </PrivateRoute>
-                } />
+                {/* 👇 Client Database – accessible by IT and Receptionists */}
+                <Route path="/clients" element={<PrivateRoute roles={['it','receptionist']}><ManageClients /></PrivateRoute>} />
+                <Route path="/clients/:id" element={<PrivateRoute roles={['it','receptionist']}><ClientDetails /></PrivateRoute>} />
+
+                <Route path="/it/dashboard" element={<PrivateRoute roles={['it']}><ErrorBoundary><ITDashboard /></ErrorBoundary></PrivateRoute>} />
+                <Route path="/it/users" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageUsers /></ErrorBoundary></PrivateRoute>} />
+                <Route path="/it/doctors" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageDoctors /></ErrorBoundary></PrivateRoute>} />
+                <Route path="/it/appointments" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageAppointments /></ErrorBoundary></PrivateRoute>} />
+                <Route path="/it/schedule" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageSchedule /></ErrorBoundary></PrivateRoute>} />
+                <Route path="/it/activity" element={<PrivateRoute roles={['it']}><ErrorBoundary><ActivityMonitor /></ErrorBoundary></PrivateRoute>} />
 
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>

@@ -17,10 +17,12 @@ import {
   FaSearch,
   FaCalendarPlus,
   FaMapMarkerAlt,
+  FaAddressBook,
 } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import { StatsSkeleton, CardSkeleton } from '../common/Skeleton';
 import ManageSchedule from '../shared/ManageSchedule';
+import ManageClients from '../shared/ManageClients';
 import { useAuth } from '../../context/AuthContext';
 
 const fetchAppointments = async () => {
@@ -214,7 +216,11 @@ const ReceptionDashboard = () => {
   }
 
   if (appointmentsQuery.error || messagesQuery.error) {
-    return <div className="text-center py-8 text-red-600">Failed to load dashboard data</div>;
+    return (
+      <div className="text-center py-8 text-red-600">
+        Failed to load dashboard data
+      </div>
+    );
   }
 
   return (
@@ -230,6 +236,7 @@ const ReceptionDashboard = () => {
           </div>
         </div>
 
+        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           <div className="bg-white rounded-xl p-3 shadow text-center">
             <p className="text-xs text-gray-500">Total</p>
@@ -253,11 +260,14 @@ const ReceptionDashboard = () => {
           </div>
         </div>
 
+        {/* Tabs */}
         <div className="flex space-x-4 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab('appointments')}
             className={`px-6 py-2 rounded-lg font-semibold ${
-              activeTab === 'appointments' ? 'bg-dental-red text-white' : 'bg-white text-gray-700'
+              activeTab === 'appointments'
+                ? 'bg-dental-red text-white'
+                : 'bg-white text-gray-700'
             }`}
           >
             <FaCalendar className="inline mr-2" /> Appointments
@@ -283,8 +293,17 @@ const ReceptionDashboard = () => {
           >
             <FaCalendarPlus className="inline mr-2" /> Schedule
           </button>
+          <button
+            onClick={() => setActiveTab('clients')}
+            className={`px-6 py-2 rounded-lg font-semibold ${
+              activeTab === 'clients' ? 'bg-dental-red text-white' : 'bg-white text-gray-700'
+            }`}
+          >
+            <FaAddressBook className="inline mr-2" /> Clients
+          </button>
         </div>
 
+        {/* Tab Content */}
         {activeTab === 'appointments' ? (
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
@@ -337,7 +356,10 @@ const ReceptionDashboard = () => {
                       <div className="space-y-1">
                         <p className="font-semibold">
                           <FaUser className="inline mr-2" />{' '}
-                          {apt.clientName || apt.client?.fullname || apt.client?.username || 'Unknown'}
+                          {apt.clientName ||
+                            apt.client?.fullname ||
+                            apt.client?.username ||
+                            'Unknown'}
                         </p>
                         <p className="text-sm text-gray-600">
                           <FaCalendar className="inline mr-1" />{' '}
@@ -441,10 +463,13 @@ const ReceptionDashboard = () => {
               )}
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'schedule' ? (
           <ManageSchedule />
+        ) : (
+          <ManageClients />
         )}
 
+        {/* Appointment Details Modal */}
         <Modal
           isOpen={showDetailsModal}
           onClose={() => setShowDetailsModal(false)}
@@ -498,6 +523,7 @@ const ReceptionDashboard = () => {
           </button>
         </Modal>
 
+        {/* Add Appointment Modal */}
         <Modal
           isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
