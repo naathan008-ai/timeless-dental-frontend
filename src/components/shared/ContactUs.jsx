@@ -59,10 +59,6 @@ const ContactUs = () => {
               <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
-                  <FaPhone className="text-dental-red text-xl mt-1" />
-                  <div><p className="font-semibold">Phone</p><p className="text-gray-600">(024)2333271 / (024)2746995</p></div>
-                </div>
-                <div className="flex items-start space-x-4">
                   <FaEnvelope className="text-dental-red text-xl mt-1" />
                   <div><p className="font-semibold">Email</p><p className="text-gray-600">timelessdentalclinic@gmail.com</p></div>
                 </div>
