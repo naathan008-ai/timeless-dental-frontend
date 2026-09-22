@@ -7,6 +7,7 @@ import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import PrivateRoute from './components/common/PrivateRoute';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import ScrollToTop from './components/common/ScrollToTop'; // 👈 NEW
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -24,8 +25,8 @@ import ManageUsers from './components/it/ManageUsers';
 import ManageDoctors from './components/it/ManageDoctors';
 import ManageAppointments from './components/it/ManageAppointments';
 import ManageSchedule from './components/shared/ManageSchedule';
-import ManageClients from './components/shared/ManageClients';           // 👈 NEW
-import ClientDetails from './components/shared/ClientDetails';           // 👈 NEW
+import ManageClients from './components/shared/ManageClients';
+import ClientDetails from './components/shared/ClientDetails';
 import ActivityMonitor from './components/it/ActivityMonitor';
 import Locations from './components/shared/Locations';
 import ContactUs from './components/shared/ContactUs';
@@ -45,6 +46,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop /> {/* 👈 ADD THIS */}
         <AuthProvider>
           <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30">
             <Navbar />
@@ -69,7 +71,6 @@ function App() {
                 <Route path="/reception/schedule" element={<PrivateRoute roles={['receptionist','it']}><ManageSchedule /></PrivateRoute>} />
                 <Route path="/reception/clients" element={<PrivateRoute roles={['receptionist','it']}><ManageClients /></PrivateRoute>} />
 
-                {/* 👇 Client Database – accessible by IT and Receptionists */}
                 <Route path="/clients" element={<PrivateRoute roles={['it','receptionist']}><ManageClients /></PrivateRoute>} />
                 <Route path="/clients/:id" element={<PrivateRoute roles={['it','receptionist']}><ClientDetails /></PrivateRoute>} />
 
