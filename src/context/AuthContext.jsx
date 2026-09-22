@@ -16,7 +16,12 @@ export const AuthProvider = ({ children }) => {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser({ id: payload.id, username: payload.username, role: payload.role });
+        setUser({
+          id: payload.id,
+          username: payload.username,
+          role: payload.role,
+          branch: payload.branch || null,
+        });
       } catch (e) {
         logout();
       }
@@ -70,7 +75,8 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: !!user,
     isClient: user?.role === 'client',
     isReceptionist: user?.role === 'receptionist',
-    isIT: user?.role === 'it'
+    isIT: user?.role === 'it',
+    branch: user?.branch || null,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

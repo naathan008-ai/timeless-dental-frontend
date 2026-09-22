@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUser, FaUserMd, FaCheckCircle } from 'react-icons/fa';
+import {
+  FaCalendar,
+  FaClock,
+  FaMapMarkerAlt,
+  FaUser,
+  FaUserMd,
+  FaCheckCircle,
+} from 'react-icons/fa';
 
 const BookAppointment = () => {
   const { user } = useAuth();
@@ -14,6 +21,9 @@ const BookAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [availableDoctors, setAvailableDoctors] = useState([]);
   const [loadingDoctors, setLoadingDoctors] = useState(false);
+
+  const branchLabel = (b) =>
+    b === 'westgate' ? 'Westgate Mall' : 'Newlands Shopping Centre';
 
   useEffect(() => {
     if (date) fetchSlots();
@@ -73,7 +83,7 @@ const BookAppointment = () => {
         clientName: user?.fullname,
         notes: '',
       });
-      toast.success('Appointment booked! A doctor will be assigned automatically.');
+      toast.success(`Appointment booked at ${branchLabel(branch)}!`);
       setSelectedTime('');
       fetchSlots();
       fetchAppointments();
@@ -103,6 +113,32 @@ const BookAppointment = () => {
           <h2 className="text-3xl font-bold text-dental-red mb-6 flex items-center">
             <FaCalendar className="mr-3" /> Book Appointment
           </h2>
+
+          <div className="bg-gradient-to-r from-dental-red to-dental-dark-red text-white rounded-xl p-4 mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FaMapMarkerAlt className="text-xl" />
+              <div>
+                <p className="text-xs opacity-90">Booking at</p>
+                <p className="font-bold text-lg">{branchLabel(branch)}</p>
+              </div>
+            </div>
+            <select
+              value={branch}
+              onChange={(e) => {
+                setBranch(e.target.value);
+                setSelectedTime('');
+              }}
+              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-1.5 text-sm font-semibold focus:outline-none"
+            >
+              <option value="westgate" className="text-gray-800">
+                Westgate Mall
+              </option>
+              <option value="newlands" className="text-gray-800">
+                Newlands Shopping Centre
+              </option>
+            </select>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block font-medium mb-2">
@@ -115,6 +151,7 @@ const BookAppointment = () => {
                 disabled
               />
             </div>
+
             <div>
               <label className="block font-medium mb-2">
                 <FaCalendar className="inline mr-2 text-dental-red" /> Date
@@ -128,23 +165,12 @@ const BookAppointment = () => {
                 required
               />
             </div>
-            <div>
-              <label className="block font-medium mb-2">
-                <FaMapMarkerAlt className="inline mr-2 text-dental-red" /> Branch
-              </label>
-              <select
-                value={branch}
-                onChange={(e) => setBranch(e.target.value)}
-                className="input-field"
-              >
-                <option value="westgate">Westgate Mall</option>
-                <option value="newlands">Newlands Shopping Centre</option>
-              </select>
-            </div>
+
             {date && (
               <div>
                 <label className="block font-medium mb-2">
-                  <FaClock className="inline mr-2 text-dental-red" /> Available Times
+                  <FaClock className="inline mr-2 text-dental-red" /> Available Times at{' '}
+                  {branchLabel(branch)}
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {slots.map((slot) => (
@@ -164,13 +190,12 @@ const BookAppointment = () => {
                 </div>
                 {slots.length === 0 && (
                   <p className="text-gray-500 mt-2">
-                    No doctors available at this branch on this date.
+                    No doctors scheduled at this branch on this date.
                   </p>
                 )}
               </div>
             )}
 
-            {/* Available doctors (read-only, auto-assign) */}
             {date && branch && selectedTime && (
               <div className="mt-4">
                 <label className="block font-medium mb-2 flex items-center">
@@ -197,14 +222,12 @@ const BookAppointment = () => {
                     <p className="text-xs text-green-700 bg-green-50 rounded p-2 mt-2 flex items-center">
                       <FaCheckCircle className="mr-2" />
                       {availableDoctors.length} doctor
-                      {availableDoctors.length > 1 ? 's' : ''} available — you'll be
-                      assigned automatically.
+                      {availableDoctors.length > 1 ? 's' : ''} available — you'll be assigned
+                      automatically.
                     </p>
                   </>
                 ) : (
-                  <p className="text-gray-500 text-sm">
-                    No doctors available at this time.
-                  </p>
+                  <p className="text-gray-500 text-sm">No doctors available at this time.</p>
                 )}
               </div>
             )}
@@ -214,7 +237,7 @@ const BookAppointment = () => {
               disabled={loading || !selectedTime}
               className="w-full btn-primary disabled:opacity-50"
             >
-              {loading ? 'Booking...' : 'Confirm Appointment'}
+              {loading ? 'Booking...' : `Confirm Appointment at ${branchLabel(branch)}`}
             </button>
           </form>
         </div>
@@ -239,7 +262,10 @@ const BookAppointment = () => {
                       <p className="text-gray-600 text-sm">
                         {new Date(apt.date).toLocaleDateString()} at {apt.time}
                       </p>
-                      <p className="text-gray-600 text-sm">Branch: {apt.branch}</p>
+                      <p className="text-gray-600 text-sm flex items-center">
+                        <FaMapMarkerAlt className="inline mr-1 text-dental-red" />
+                        {branchLabel(apt.branch)}
+                      </p>
                       {apt.doctor && (
                         <p className="text-gray-600 text-sm">
                           Doctor: {apt.doctor.fullname || apt.doctor.username}

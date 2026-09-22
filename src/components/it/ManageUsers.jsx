@@ -9,7 +9,15 @@ const ManageUsers = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ fullname: '', username: '', idNumber: '', email: '', role: 'client', isActive: true });
+  const [form, setForm] = useState({
+    fullname: '',
+    username: '',
+    idNumber: '',
+    email: '',
+    role: 'client',
+    branch: 'westgate',
+    isActive: true,
+  });
 
   useEffect(() => {
     fetchUsers();
@@ -29,16 +37,29 @@ const ManageUsers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = { ...form };
+      if (payload.role !== 'receptionist' && payload.role !== 'doctor') {
+        delete payload.branch;
+      }
+
       if (editing) {
-        await api.put(`/api/users/${editing._id}`, form);
+        await api.put(`/api/users/${editing._id}`, payload);
         toast.success('User updated');
       } else {
-        await api.post('/api/users', form);
+        await api.post('/api/users', payload);
         toast.success('User created');
       }
       setShowModal(false);
       setEditing(null);
-      setForm({ fullname: '', username: '', idNumber: '', email: '', role: 'client', isActive: true });
+      setForm({
+        fullname: '',
+        username: '',
+        idNumber: '',
+        email: '',
+        role: 'client',
+        branch: 'westgate',
+        isActive: true,
+      });
       fetchUsers();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Operation failed');
@@ -78,7 +99,15 @@ const ManageUsers = () => {
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center h-64"><div className="spinner"></div></div>;
+  const branchLabel = (b) =>
+    b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands' : '-';
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="spinner"></div>
+      </div>
+    );
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6">
@@ -87,7 +116,15 @@ const ManageUsers = () => {
         <button
           onClick={() => {
             setEditing(null);
-            setForm({ fullname: '', username: '', idNumber: '', email: '', role: 'client', isActive: true });
+            setForm({
+              fullname: '',
+              username: '',
+              idNumber: '',
+              email: '',
+              role: 'client',
+              branch: 'westgate',
+              isActive: true,
+            });
             setShowModal(true);
           }}
           className="btn-primary flex items-center"
@@ -101,9 +138,11 @@ const ManageUsers = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">User</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Username</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Role</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Receptionist ID</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Branch</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">
+                Receptionist ID
+              </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Status</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Actions</th>
             </tr>
@@ -114,26 +153,47 @@ const ManageUsers = () => {
                 <td className="px-4 py-3">
                   <p className="font-semibold">{u.fullname}</p>
                   <p className="text-xs text-gray-500">{u.email}</p>
+                  <p className="text-xs text-gray-400">@{u.username}</p>
                 </td>
-                <td className="px-4 py-3">{u.username}</td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    u.role === 'it' ? 'bg-red-100 text-red-700' :
-                    u.role === 'receptionist' ? 'bg-blue-100 text-blue-700' :
-                    'bg-gray-100 text-gray-700'
-                  }`}>{u.role}</span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      u.role === 'it'
+                        ? 'bg-red-100 text-red-700'
+                        : u.role === 'receptionist'
+                        ? 'bg-blue-100 text-blue-700'
+                        : u.role === 'doctor'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    {u.role}
+                  </span>
                 </td>
+                <td className="px-4 py-3 text-sm">{branchLabel(u.branch)}</td>
                 <td className="px-4 py-3 font-mono text-sm">{u.receptionistId || '-'}</td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>{u.isActive ? 'Active' : 'Inactive'}</span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}
+                  >
+                    {u.isActive ? 'Active' : 'Inactive'}
+                  </span>
                 </td>
                 <td className="px-4 py-3 flex space-x-2">
                   <button
                     onClick={() => {
                       setEditing(u);
-                      setForm(u);
+                      setForm({
+                        fullname: u.fullname || '',
+                        username: u.username || '',
+                        idNumber: u.idNumber || '',
+                        email: u.email || '',
+                        role: u.role || 'client',
+                        branch: u.branch || 'westgate',
+                        isActive: u.isActive !== false,
+                      });
                       setShowModal(true);
                     }}
                     className="text-blue-600 hover:bg-blue-50 p-1 rounded"
@@ -169,7 +229,6 @@ const ManageUsers = () => {
         </table>
       </div>
 
-      {/* Modal */}
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -180,7 +239,7 @@ const ManageUsers = () => {
             type="text"
             placeholder="Full Name"
             value={form.fullname}
-            onChange={(e) => setForm({...form, fullname: e.target.value})}
+            onChange={(e) => setForm({ ...form, fullname: e.target.value })}
             className="input-field"
             required
           />
@@ -188,7 +247,7 @@ const ManageUsers = () => {
             type="text"
             placeholder="Username"
             value={form.username}
-            onChange={(e) => setForm({...form, username: e.target.value})}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
             className="input-field"
             required
           />
@@ -196,21 +255,20 @@ const ManageUsers = () => {
             type="text"
             placeholder="ID (00-0000000A00)"
             value={form.idNumber}
-            onChange={(e) => setForm({...form, idNumber: e.target.value})}
+            onChange={(e) => setForm({ ...form, idNumber: e.target.value })}
             className="input-field"
-            required
           />
           <input
             type="email"
             placeholder="Email"
             value={form.email}
-            onChange={(e) => setForm({...form, email: e.target.value})}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
             className="input-field"
             required
           />
           <select
             value={form.role}
-            onChange={(e) => setForm({...form, role: e.target.value})}
+            onChange={(e) => setForm({ ...form, role: e.target.value })}
             className="input-field"
           >
             <option value="client">Client</option>
@@ -218,25 +276,52 @@ const ManageUsers = () => {
             <option value="doctor">Doctor</option>
             <option value="it">IT</option>
           </select>
+
+          {(form.role === 'receptionist' || form.role === 'doctor') && (
+            <div>
+              <label className="block font-medium mb-1">Branch *</label>
+              <select
+                value={form.branch}
+                onChange={(e) => setForm({ ...form, branch: e.target.value })}
+                className="input-field"
+                required
+              >
+                <option value="westgate">Westgate Mall</option>
+                <option value="newlands">Newlands Shopping Centre</option>
+              </select>
+            </div>
+          )}
+
           <div className="flex space-x-4">
             <label>
               <input
                 type="radio"
                 checked={form.isActive}
-                onChange={() => setForm({...form, isActive: true})}
-              /> Active
+                onChange={() => setForm({ ...form, isActive: true })}
+              />{' '}
+              Active
             </label>
             <label>
               <input
                 type="radio"
                 checked={!form.isActive}
-                onChange={() => setForm({...form, isActive: false})}
-              /> Inactive
+                onChange={() => setForm({ ...form, isActive: false })}
+              />{' '}
+              Inactive
             </label>
           </div>
+
           <div className="flex space-x-4">
-            <button type="submit" className="flex-1 btn-primary">{editing ? 'Update' : 'Create'}</button>
-            <button type="button" onClick={() => setShowModal(false)} className="flex-1 btn-secondary">Cancel</button>
+            <button type="submit" className="flex-1 btn-primary">
+              {editing ? 'Update' : 'Create'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="flex-1 btn-secondary"
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </Modal>

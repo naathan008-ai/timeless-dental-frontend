@@ -3,14 +3,26 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import {
-  FaTooth, FaCalendar, FaEnvelope, FaUser, FaClock,
-  FaCheck, FaTimes, FaEye, FaTrash, FaPlus, FaFilter, FaSearch, FaCalendarPlus
+  FaTooth,
+  FaCalendar,
+  FaEnvelope,
+  FaUser,
+  FaClock,
+  FaCheck,
+  FaTimes,
+  FaEye,
+  FaTrash,
+  FaPlus,
+  FaFilter,
+  FaSearch,
+  FaCalendarPlus,
+  FaMapMarkerAlt,
 } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import { StatsSkeleton, CardSkeleton } from '../common/Skeleton';
 import ManageSchedule from '../shared/ManageSchedule';
+import { useAuth } from '../../context/AuthContext';
 
-// ========== API fetch functions ==========
 const fetchAppointments = async () => {
   const { data } = await api.get('/api/appointments/all');
   return data;
@@ -24,7 +36,17 @@ const fetchClients = async () => {
   return data.filter((u) => u.role === 'client');
 };
 
+const branchLabel = (b) =>
+  b === 'westgate'
+    ? 'Westgate Mall'
+    : b === 'newlands'
+    ? 'Newlands Shopping Centre'
+    : 'All Branches';
+
 const ReceptionDashboard = () => {
+  const { user } = useAuth();
+  const branchName = branchLabel(user?.branch);
+
   const [activeTab, setActiveTab] = useState('appointments');
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
@@ -37,11 +59,10 @@ const ReceptionDashboard = () => {
     clientName: '',
     date: '',
     time: '',
-    branch: 'westgate',
+    branch: user?.branch || 'westgate',
     notes: '',
   });
 
-  // ---------- React Query ----------
   const appointmentsQuery = useQuery({
     queryKey: ['receptionAppointments'],
     queryFn: fetchAppointments,
@@ -67,7 +88,6 @@ const ReceptionDashboard = () => {
   const isLoading =
     appointmentsQuery.isLoading || messagesQuery.isLoading || clientsQuery.isLoading;
 
-  // ---------- Stats ----------
   const stats = {
     total: appointments.length,
     pending: appointments.filter((a) => a.status === 'pending').length,
@@ -77,7 +97,6 @@ const ReceptionDashboard = () => {
   };
   const unreadCount = messages.filter((m) => !m.isRead && !m.isFromReceptionist).length;
 
-  // ---------- Handlers ----------
   const updateStatus = async (id, status) => {
     if (!window.confirm(`Mark as ${status}?`)) return;
     try {
@@ -144,7 +163,7 @@ const ReceptionDashboard = () => {
         clientName: '',
         date: '',
         time: '',
-        branch: 'westgate',
+        branch: user?.branch || 'westgate',
         notes: '',
       });
       appointmentsQuery.refetch();
@@ -157,7 +176,12 @@ const ReceptionDashboard = () => {
     if (filter !== 'all' && a.status !== filter) return false;
     if (search) {
       const term = search.toLowerCase();
-      const client = (a.clientName || a.client?.fullname || a.client?.username || '').toLowerCase();
+      const client = (
+        a.clientName ||
+        a.client?.fullname ||
+        a.client?.username ||
+        ''
+      ).toLowerCase();
       return client.includes(term);
     }
     return true;
@@ -196,11 +220,16 @@ const ReceptionDashboard = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-dental-red mb-6 flex items-center">
-          <FaTooth className="mr-3" /> Receptionist Dashboard
-        </h1>
+        <div className="flex flex-wrap items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-dental-red flex items-center">
+            <FaTooth className="mr-3" /> Receptionist Dashboard
+          </h1>
+          <div className="flex items-center gap-2 bg-dental-red text-white px-4 py-2 rounded-xl shadow">
+            <FaMapMarkerAlt />
+            <span className="font-semibold">{branchName}</span>
+          </div>
+        </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           <div className="bg-white rounded-xl p-3 shadow text-center">
             <p className="text-xs text-gray-500">Total</p>
@@ -224,7 +253,6 @@ const ReceptionDashboard = () => {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex space-x-4 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab('appointments')}
@@ -296,7 +324,9 @@ const ReceptionDashboard = () => {
 
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {filteredAppointments.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No appointments found</p>
+                <p className="text-center text-gray-500 py-8">
+                  No appointments found for {branchName}
+                </p>
               ) : (
                 filteredAppointments.map((apt) => (
                   <div
@@ -306,16 +336,18 @@ const ReceptionDashboard = () => {
                     <div className="flex flex-wrap justify-between items-start">
                       <div className="space-y-1">
                         <p className="font-semibold">
-                          <FaUser className="inline mr-2" />
+                          <FaUser className="inline mr-2" />{' '}
                           {apt.clientName || apt.client?.fullname || apt.client?.username || 'Unknown'}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <FaCalendar className="inline mr-1" />
+                          <FaCalendar className="inline mr-1" />{' '}
                           {new Date(apt.date).toLocaleDateString()}
-                          <FaClock className="inline ml-2 mr-1" />
-                          {apt.time}
+                          <FaClock className="inline ml-2 mr-1" /> {apt.time}
                         </p>
-                        <p className="text-sm text-gray-600">Branch: {apt.branch}</p>
+                        <p className="text-sm text-gray-600">
+                          <FaMapMarkerAlt className="inline mr-1 text-dental-red" />
+                          {branchLabel(apt.branch)}
+                        </p>
                         {apt.doctor && (
                           <p className="text-sm text-gray-600">
                             Doctor: {apt.doctor.fullname || apt.doctor.username}
@@ -374,7 +406,7 @@ const ReceptionDashboard = () => {
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {messages.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No messages</p>
+                <p className="text-center text-gray-500 py-8">No messages for {branchName}</p>
               ) : (
                 messages.map((msg) => (
                   <div
@@ -413,7 +445,6 @@ const ReceptionDashboard = () => {
           <ManageSchedule />
         )}
 
-        {/* Details Modal */}
         <Modal
           isOpen={showDetailsModal}
           onClose={() => setShowDetailsModal(false)}
@@ -421,18 +452,42 @@ const ReceptionDashboard = () => {
         >
           {selected && (
             <div className="space-y-2">
-              <p><strong>Client:</strong> {selected.clientName || selected.client?.fullname}</p>
-              <p><strong>Username:</strong> {selected.client?.username || 'N/A'}</p>
-              <p><strong>ID:</strong> {selected.client?.idNumber || 'N/A'}</p>
-              <p><strong>Email:</strong> {selected.client?.email || 'N/A'}</p>
-              <p><strong>Date:</strong> {new Date(selected.date).toLocaleDateString()}</p>
-              <p><strong>Time:</strong> {selected.time}</p>
-              <p><strong>Branch:</strong> {selected.branch}</p>
+              <p>
+                <strong>Client:</strong> {selected.clientName || selected.client?.fullname}
+              </p>
+              <p>
+                <strong>Username:</strong> {selected.client?.username || 'N/A'}
+              </p>
+              <p>
+                <strong>ID:</strong> {selected.client?.idNumber || 'N/A'}
+              </p>
+              <p>
+                <strong>Email:</strong> {selected.client?.email || 'N/A'}
+              </p>
+              <p>
+                <strong>Date:</strong> {new Date(selected.date).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Time:</strong> {selected.time}
+              </p>
+              <p>
+                <strong>Branch:</strong> {branchLabel(selected.branch)}
+              </p>
               {selected.doctor && (
-                <p><strong>Doctor:</strong> {selected.doctor.fullname || selected.doctor.username}</p>
+                <p>
+                  <strong>Doctor:</strong>{' '}
+                  {selected.doctor.fullname || selected.doctor.username}
+                </p>
               )}
-              <p><strong>Status:</strong> <span className={getStatusBadge(selected.status)}>{selected.status}</span></p>
-              {selected.notes && <p><strong>Notes:</strong> {selected.notes}</p>}
+              <p>
+                <strong>Status:</strong>{' '}
+                <span className={getStatusBadge(selected.status)}>{selected.status}</span>
+              </p>
+              {selected.notes && (
+                <p>
+                  <strong>Notes:</strong> {selected.notes}
+                </p>
+              )}
             </div>
           )}
           <button
@@ -443,7 +498,6 @@ const ReceptionDashboard = () => {
           </button>
         </Modal>
 
-        {/* Add Appointment Modal */}
         <Modal
           isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
@@ -510,7 +564,7 @@ const ReceptionDashboard = () => {
                 className="input-field"
               >
                 <option value="westgate">Westgate Mall</option>
-                <option value="newlands">Newlands</option>
+                <option value="newlands">Newlands Shopping Centre</option>
               </select>
             </div>
             <div>
