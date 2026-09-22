@@ -24,7 +24,6 @@ const Home = () => {
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex justify-center mb-6">
               <div className="flex items-center space-x-1 animate-float">
-                <FaTooth className="text-5xl md:text-6xl dental-icon" />
                 <FaTooth className="text-6xl md:text-7xl dental-icon" />
                 <FaTooth className="text-7xl md:text-8xl dental-icon" />
                 <FaTooth className="text-6xl md:text-7xl dental-icon" />

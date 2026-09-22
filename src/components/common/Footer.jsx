@@ -68,7 +68,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-red-400 mt-1" />
-                <span>info@timelessdental.com</span>
+                <span>timelessdentalclinic@gmail.com</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-red-400 mt-1" />
@@ -93,7 +93,8 @@ const Footer = () => {
                   <p className="text-sm text-gray-500">Sunday: Closed</p>
                 </div>
               </li>
-              <li className="text-sm text-red-400">Emergency: (024)2333271</li>
+              <li className="text-sm text-red-400"> Westgate Emergency: (024)2333271</li>
+              <li className="text-sm text-red-400">Newlands Emergency: (024)2746995</li>
             </ul>
           </div>
         </div>
