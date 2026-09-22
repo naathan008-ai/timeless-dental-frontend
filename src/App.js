@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
@@ -7,7 +7,7 @@ import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import PrivateRoute from './components/common/PrivateRoute';
 import ErrorBoundary from './components/common/ErrorBoundary';
-import ScrollToTop from './components/common/ScrollToTop'; // 👈 NEW
+import ScrollToTop from './components/common/ScrollToTop';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -36,57 +36,188 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5,
+      refreshOnWindowFocus: false,
       refetchOnWindowFocus: false,
       retry: 1,
     },
   },
 });
 
+function AppContent() {
+  const { pathname } = useLocation();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30">
+      <Navbar />
+      <main
+        key={pathname}
+        className="flex-grow container mx-auto px-4 py-6 animate-fade-in"
+      >
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/locations" element={<Locations />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/ai-chat" element={<AIChat />} />
+
+          {/* Client routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/appointments/book"
+            element={
+              <PrivateRoute roles={['client']}>
+                <BookAppointment />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/appointments/view"
+            element={
+              <PrivateRoute>
+                <ViewAppointments />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Receptionist routes */}
+          <Route
+            path="/reception/dashboard"
+            element={
+              <PrivateRoute roles={['receptionist', 'it']}>
+                <ReceptionDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/reception/schedule"
+            element={
+              <PrivateRoute roles={['receptionist', 'it']}>
+                <ManageSchedule />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/reception/clients"
+            element={
+              <PrivateRoute roles={['receptionist', 'it']}>
+                <ManageClients />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Clients database — IT + Reception */}
+          <Route
+            path="/clients"
+            element={
+              <PrivateRoute roles={['it', 'receptionist']}>
+                <ManageClients />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/clients/:id"
+            element={
+              <PrivateRoute roles={['it', 'receptionist']}>
+                <ClientDetails />
+              </PrivateRoute>
+            }
+          />
+
+          {/* IT routes */}
+          <Route
+            path="/it/dashboard"
+            element={
+              <PrivateRoute roles={['it']}>
+                <ErrorBoundary>
+                  <ITDashboard />
+                </ErrorBoundary>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/it/users"
+            element={
+              <PrivateRoute roles={['it']}>
+                <ErrorBoundary>
+                  <ManageUsers />
+                </ErrorBoundary>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/it/doctors"
+            element={
+              <PrivateRoute roles={['it']}>
+                <ErrorBoundary>
+                  <ManageDoctors />
+                </ErrorBoundary>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/it/appointments"
+            element={
+              <PrivateRoute roles={['it']}>
+                <ErrorBoundary>
+                  <ManageAppointments />
+                </ErrorBoundary>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/it/schedule"
+            element={
+              <PrivateRoute roles={['it']}>
+                <ErrorBoundary>
+                  <ManageSchedule />
+                </ErrorBoundary>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/it/activity"
+            element={
+              <PrivateRoute roles={['it']}>
+                <ErrorBoundary>
+                  <ActivityMonitor />
+                </ErrorBoundary>
+              </PrivateRoute>
+            }
+          />
+
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </main>
+      <Footer />
+      <Toaster
+        position="top-right"
+        toastOptions={{ className: 'rounded-2xl shadow-glass' }}
+      />
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <ScrollToTop /> {/* 👈 ADD THIS */}
+        <ScrollToTop />
         <AuthProvider>
-          <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30">
-            <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-6 animate-fade-in">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password/:token" element={<ResetPassword />} />
-                <Route path="/locations" element={<Locations />} />
-                <Route path="/contact" element={<ContactUs />} />
-                <Route path="/ai-chat" element={<AIChat />} />
-
-                <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                <Route path="/appointments/book" element={<PrivateRoute roles={['client']}><BookAppointment /></PrivateRoute>} />
-                <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
-
-                <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist','it']}><ReceptionDashboard /></PrivateRoute>} />
-                <Route path="/reception/schedule" element={<PrivateRoute roles={['receptionist','it']}><ManageSchedule /></PrivateRoute>} />
-                <Route path="/reception/clients" element={<PrivateRoute roles={['receptionist','it']}><ManageClients /></PrivateRoute>} />
-
-                <Route path="/clients" element={<PrivateRoute roles={['it','receptionist']}><ManageClients /></PrivateRoute>} />
-                <Route path="/clients/:id" element={<PrivateRoute roles={['it','receptionist']}><ClientDetails /></PrivateRoute>} />
-
-                <Route path="/it/dashboard" element={<PrivateRoute roles={['it']}><ErrorBoundary><ITDashboard /></ErrorBoundary></PrivateRoute>} />
-                <Route path="/it/users" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageUsers /></ErrorBoundary></PrivateRoute>} />
-                <Route path="/it/doctors" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageDoctors /></ErrorBoundary></PrivateRoute>} />
-                <Route path="/it/appointments" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageAppointments /></ErrorBoundary></PrivateRoute>} />
-                <Route path="/it/schedule" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageSchedule /></ErrorBoundary></PrivateRoute>} />
-                <Route path="/it/activity" element={<PrivateRoute roles={['it']}><ErrorBoundary><ActivityMonitor /></ErrorBoundary></PrivateRoute>} />
-
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </main>
-            <Footer />
-            <Toaster position="top-right" toastOptions={{ className: 'rounded-2xl shadow-glass' }} />
-          </div>
+          <AppContent />
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>

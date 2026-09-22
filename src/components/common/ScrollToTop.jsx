@@ -5,10 +5,17 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'instant', // use 'instant' to jump, or 'smooth' for animated
+    // Scroll every possible scroll target to top
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    // Also scroll any element with overflow that might be the container
+    const scrollableElements = document.querySelectorAll(
+      '[data-scroll-container], main, .scroll-container'
+    );
+    scrollableElements.forEach((el) => {
+      el.scrollTop = 0;
     });
   }, [pathname]);
 
