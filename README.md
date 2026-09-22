@@ -1,70 +1,197 @@
-# Getting Started with Create React App
+# 🦷 Timeless Dental Clinic — Full Stack Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, production-ready dental practice management system built for **Timeless Dental Clinic**, Harare, Zimbabwe. It handles appointments, doctor scheduling, patient communication, AI-powered dental advice, and role-based access for clients, receptionists, and IT administrators.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📋 Table of Contents
 
-### `npm start`
+- [Overview](#-overview)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [User Roles](#-user-roles)
+- [Quick Start](#-quick-start)
+- [Environment Variables](#-environment-variables)
+- [Database](#-database)
+- [API Reference](#-api-reference)
+- [Frontend Routes](#-frontend-routes)
+- [Doctor Scheduling System](#-doctor-scheduling-system)
+- [AI Assistant](#-ai-assistant)
+- [Deployment](#-deployment)
+- [Default IT Admin](#-default-it-admin)
+- [Branch Information](#-branch-information)
+- [Working Hours](#-working-hours)
+- [Social Media](#-social-media)
+- [Troubleshooting](#-troubleshooting)
+- [License](#-license)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📖 Overview
 
-### `npm test`
+**Timeless Dental Clinic** is a full-stack web application serving two branches in Harare:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Westgate Mall** — Timeless Dental Clinic
+- **Newlands Shopping Centre** — Timeless Dental Clinic
 
-### `npm run build`
+The system provides real-time appointment booking, doctor scheduling across branches, an AI dental assistant available to guests, and complete administrative control for the IT department.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## ✨ Features
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🧑‍⚕️ For Clients
+- Secure registration and login
+- Real-time appointment booking
+- See which doctors are available before booking
+- View, manage, and cancel appointments
+- Public access to the AI dental assistant (no login required)
+- Direct messaging to reception
 
-### `npm run eject`
+### 👩‍💼 For Receptionists
+- Approve, cancel, or complete appointments
+- Manually create appointments for walk-ins
+- Manage doctor schedules across branches
+- Read and reply to client messages
+- Search and filter appointments by status, date, or client
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 🛠️ For IT Administrators
+- Complete system control
+- Create, edit, deactivate, or delete users
+- Grant and revoke IT privileges
+- Manage doctors and their specializations
+- Manage doctor schedules
+- Monitor all activity logs
+- Full dashboard with system statistics
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 🤖 AI Assistant
+- Publicly accessible — no login required
+- Handles greetings, follow-ups, and dental questions
+- Provides evidence-based dental advice (pain, swelling, sensitivity, whitening, etc.)
+- Escalates to a receptionist when requested (login required for this action)
+- Uses OpenAI when configured; otherwise falls back to rule-based responses
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🧰 Tech Stack
 
-## Learn More
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 18, React Router 6, Tailwind CSS 3, React Query, React Icons, React Hot Toast, Axios |
+| **Backend** | Node.js, Express, Mongoose, JWT, Nodemailer, OpenAI SDK |
+| **Database** | MongoDB Atlas (cloud) |
+| **Deployment** | Vercel (frontend), Render (backend), MongoDB Atlas (database) |
+| **Dev Tools** | Nodemon, ESLint, PostCSS, Autoprefixer |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📁 Project Structure
+timeless-dental-clinic/
+├── backend/
+│ ├── src/
+│ │ ├── config/
+│ │ │ ├── database.js
+│ │ │ └── email.js
+│ │ ├── controllers/
+│ │ │ ├── authController.js
+│ │ │ ├── appointmentController.js
+│ │ │ ├── messageController.js
+│ │ │ ├── userController.js
+│ │ │ ├── scheduleController.js
+│ │ │ └── aiController.js
+│ │ ├── middleware/
+│ │ │ ├── auth.js
+│ │ │ ├── optionalAuth.js
+│ │ │ └── roles.js
+│ │ ├── models/
+│ │ │ ├── User.js
+│ │ │ ├── Appointment.js
+│ │ │ ├── Message.js
+│ │ │ ├── Schedule.js
+│ │ │ └── ActivityLog.js
+│ │ ├── routes/
+│ │ │ ├── authRoutes.js
+│ │ │ ├── appointmentRoutes.js
+│ │ │ ├── messageRoutes.js
+│ │ │ ├── userRoutes.js
+│ │ │ ├── scheduleRoutes.js
+│ │ │ └── aiRoutes.js
+│ │ ├── services/
+│ │ │ └── aiService.js
+│ │ ├── utils/
+│ │ │ └── helpers.js
+│ │ └── server.js
+│ ├── .env
+│ └── package.json
+│
+├── frontend/
+│ ├── public/
+│ │ ├── index.html
+│ │ ├── manifest.json
+│ │ ├── robots.txt
+│ │ └── favicon.svg
+│ ├── src/
+│ │ ├── components/
+│ │ │ ├── common/ # Navbar, Footer, PrivateRoute, Modal, Skeleton, ErrorBoundary
+│ │ │ ├── auth/ # Login, Register, ForgotPassword, ResetPassword
+│ │ │ ├── client/ # BookAppointment, ViewAppointments, AIChat
+│ │ │ ├── receptionist/ # ReceptionDashboard
+│ │ │ ├── it/ # ITDashboard, ManageUsers, ManageDoctors,
+│ │ │ │ # ManageAppointments, ActivityMonitor
+│ │ │ └── shared/ # Locations, ContactUs, ManageSchedule
+│ │ ├── context/
+│ │ │ └── AuthContext.jsx
+│ │ ├── hooks/
+│ │ │ ├── useAppointments.js
+│ │ │ └── useMessages.js
+│ │ ├── pages/
+│ │ │ ├── Home.jsx
+│ │ │ ├── About.jsx
+│ │ │ ├── Services.jsx
+│ │ │ └── Dashboard.jsx
+│ │ ├── services/
+│ │ │ ├── api.js
+│ │ │ └── socket.js
+│ │ ├── styles/
+│ │ │ └── global.css
+│ │ ├── App.jsx
+│ │ └── index.jsx
+│ ├── .env
+│ ├── .env.production
+│ ├── tailwind.config.js
+│ ├── postcss.config.js
+│ └── package.json
+│
+└── README.md
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 👥 User Roles
 
-### Analyzing the Bundle Size
+| Role | Description | Access |
+|------|-------------|--------|
+| **Client** | Registered patient | Book appointments, view own appointments, message reception, use AI chat |
+| **Receptionist** | Front-desk staff | All client access + manage all appointments, manage schedules, view messages |
+| **Doctor** | Dental practitioner | Assigned to appointments and schedule slots |
+| **IT Admin** | System administrator | Full control — user management, scheduling, monitoring, system configuration |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+> **Receptionists** log in with their **Username + Receptionist ID** (no password needed). The unique Receptionist ID is auto-generated by IT when creating their account.
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🚀 Quick Start
 
-### Advanced Configuration
+### Prerequisites
+- **Node.js** v18 or later
+- **npm** v9 or later
+- **MongoDB** — local instance or MongoDB Atlas cluster
+- **Git**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Backend Setup
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+cd backend
+npm install
+cp .env.example .env       # then edit .env with your values
+npm run dev                # runs on http://localhost:5000

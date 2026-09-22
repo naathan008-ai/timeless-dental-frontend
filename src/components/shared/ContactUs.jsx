@@ -20,14 +20,14 @@ const ContactUs = () => {
     {
       name: 'Westgate Mall',
       address: 'Westgate Mall, Harare, Zimbabwe',
-      phone: '+26377 885 5511',
+      phone: '(024)2333271',
       mapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3798.123456789!2d31.05!3d-17.82!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTfCsDQ5JzEyLjAiUyAzMcKwMDMnMDAuMCJF!5e0!3m2!1sen!2szw!4v1234567890',
       directions: 'https://www.google.com/maps/dir//Westgate+Mall+Harare+Zimbabwe'
     },
     {
       name: 'Newlands Shopping Centre',
       address: 'Newlands Shopping Centre, Harare, Zimbabwe',
-      phone: '(024)2333271',
+      phone: '(024)2746995',
       mapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3798.987654321!2d31.10!3d-17.85!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTfCsDUxJzAwLjAiUyAzMcKwMDYnMDAuMCJF!5e0!3m2!1sen!2szw!4v1234567891',
       directions: 'https://www.google.com/maps/dir//Newlands+Shopping+Centre+Harare+Zimbabwe'
     }
@@ -60,7 +60,7 @@ const ContactUs = () => {
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
                   <FaPhone className="text-dental-red text-xl mt-1" />
-                  <div><p className="font-semibold">Phone</p><p className="text-gray-600">(024)2333271</p></div>
+                  <div><p className="font-semibold">Phone</p><p className="text-gray-600">(024)2333271 / (024)2746995</p></div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <FaEnvelope className="text-dental-red text-xl mt-1" />
@@ -71,7 +71,8 @@ const ContactUs = () => {
               {/* Emergency banner */}
               <div className="mt-4 p-3 bg-red-50 rounded-xl border border-red-200">
                 <p className="font-bold text-dental-red">🦷 Emergency?</p>
-                <p className="text-gray-700">Call: <span className="font-bold">(024)2333271</span></p>
+                <p className="text-gray-700">Call: <span className="font-bold">Westgate:(024)2333271</span></p>
+                <p className="text-gray-700">Call: <span className="font-bold">Newlands:(024)2746995</span></p>
               </div>
             </div>
 
