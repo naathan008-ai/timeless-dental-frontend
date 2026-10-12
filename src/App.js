@@ -24,7 +24,6 @@ import ITDashboard from './components/it/ITDashboard';
 import ManageUsers from './components/it/ManageUsers';
 import ManageDoctors from './components/it/ManageDoctors';
 import ManageAppointments from './components/it/ManageAppointments';
-import ManageSchedule from './components/shared/ManageSchedule';
 import ManageClients from './components/shared/ManageClients';
 import ClientDetails from './components/shared/ClientDetails';
 import ActivityMonitor from './components/it/ActivityMonitor';
@@ -36,7 +35,6 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5,
-      refreshOnWindowFocus: false,
       refetchOnWindowFocus: false,
       retry: 1,
     },
@@ -54,7 +52,7 @@ function AppContent() {
         className="flex-grow container mx-auto px-4 py-6 animate-fade-in"
       >
         <Routes>
-          {/* Public routes */}
+          {/* Public */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
@@ -66,7 +64,7 @@ function AppContent() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/ai-chat" element={<AIChat />} />
 
-          {/* Client routes */}
+          {/* Client */}
           <Route
             path="/dashboard"
             element={
@@ -92,20 +90,24 @@ function AppContent() {
             }
           />
 
-          {/* Receptionist routes */}
+          {/* Doctors & Schedules — IT + Reception */}
+          <Route
+            path="/doctors"
+            element={
+              <PrivateRoute roles={['it', 'receptionist']}>
+                <ErrorBoundary>
+                  <ManageDoctors />
+                </ErrorBoundary>
+              </PrivateRoute>
+            }
+          />
+
+          {/* Reception */}
           <Route
             path="/reception/dashboard"
             element={
               <PrivateRoute roles={['receptionist', 'it']}>
                 <ReceptionDashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/reception/schedule"
-            element={
-              <PrivateRoute roles={['receptionist', 'it']}>
-                <ManageSchedule />
               </PrivateRoute>
             }
           />
@@ -118,7 +120,7 @@ function AppContent() {
             }
           />
 
-          {/* Clients database — IT + Reception */}
+          {/* Clients database */}
           <Route
             path="/clients"
             element={
@@ -136,7 +138,7 @@ function AppContent() {
             }
           />
 
-          {/* IT routes */}
+          {/* IT */}
           <Route
             path="/it/dashboard"
             element={
@@ -158,31 +160,11 @@ function AppContent() {
             }
           />
           <Route
-            path="/it/doctors"
-            element={
-              <PrivateRoute roles={['it']}>
-                <ErrorBoundary>
-                  <ManageDoctors />
-                </ErrorBoundary>
-              </PrivateRoute>
-            }
-          />
-          <Route
             path="/it/appointments"
             element={
               <PrivateRoute roles={['it']}>
                 <ErrorBoundary>
                   <ManageAppointments />
-                </ErrorBoundary>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/it/schedule"
-            element={
-              <PrivateRoute roles={['it']}>
-                <ErrorBoundary>
-                  <ManageSchedule />
                 </ErrorBoundary>
               </PrivateRoute>
             }
@@ -198,7 +180,11 @@ function AppContent() {
             }
           />
 
-          {/* Catch-all */}
+          {/* Old URLs redirect */}
+          <Route path="/it/doctors" element={<Navigate to="/doctors" replace />} />
+          <Route path="/it/schedule" element={<Navigate to="/doctors" replace />} />
+          <Route path="/reception/schedule" element={<Navigate to="/doctors" replace />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

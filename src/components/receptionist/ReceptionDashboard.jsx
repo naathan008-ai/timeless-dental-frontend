@@ -15,14 +15,14 @@ import {
   FaPlus,
   FaFilter,
   FaSearch,
-  FaCalendarPlus,
   FaMapMarkerAlt,
   FaAddressBook,
+  FaUserMd,
 } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import { StatsSkeleton, CardSkeleton } from '../common/Skeleton';
-import ManageSchedule from '../shared/ManageSchedule';
 import ManageClients from '../shared/ManageClients';
+import ManageDoctors from '../it/ManageDoctors';
 import { useAuth } from '../../context/AuthContext';
 
 const fetchAppointments = async () => {
@@ -286,12 +286,12 @@ const ReceptionDashboard = () => {
             )}
           </button>
           <button
-            onClick={() => setActiveTab('schedule')}
+            onClick={() => setActiveTab('doctors')}
             className={`px-6 py-2 rounded-lg font-semibold ${
-              activeTab === 'schedule' ? 'bg-dental-red text-white' : 'bg-white text-gray-700'
+              activeTab === 'doctors' ? 'bg-dental-red text-white' : 'bg-white text-gray-700'
             }`}
           >
-            <FaCalendarPlus className="inline mr-2" /> Schedule
+            <FaUserMd className="inline mr-2" /> Doctors & Schedules
           </button>
           <button
             onClick={() => setActiveTab('clients')}
@@ -428,7 +428,9 @@ const ReceptionDashboard = () => {
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {messages.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No messages for {branchName}</p>
+                <p className="text-center text-gray-500 py-8">
+                  No messages for {branchName}
+                </p>
               ) : (
                 messages.map((msg) => (
                   <div
@@ -463,8 +465,8 @@ const ReceptionDashboard = () => {
               )}
             </div>
           </div>
-        ) : activeTab === 'schedule' ? (
-          <ManageSchedule />
+        ) : activeTab === 'doctors' ? (
+          <ManageDoctors />
         ) : (
           <ManageClients />
         )}
