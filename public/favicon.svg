@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" width="120" height="32">
+  <g fill="#c41e3a">
+    <!-- Left tooth -->
+    <path d="M6 2 C10.5 0.5 15.5 0.5 20 2 C20 6 18 10 16 14 L15 20 L13 20 L12 14 C10 10 8 6 6 2Z" />
+    <!-- Middle (larger) tooth -->
+    <path d="M44 0 C51 -1.5 58 -1.5 65 0 C65 7 61 13 57 18 L56 25 L53 25 L52 18 C48 13 46 7 44 0Z" />
+    <!-- Right tooth -->
+    <path d="M68 1 C73.5 -0.5 79.5 -0.5 85 1 C85 6 82 11 79 16 L78 22 L76 22 L75 16 C72 11 70 6 68 1Z" />
+  </g>
+</svg>
