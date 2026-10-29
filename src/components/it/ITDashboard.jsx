@@ -9,6 +9,7 @@ import {
   FaChartLine,
   FaUserMd,
   FaAddressBook,
+  FaUsersCog,
 } from 'react-icons/fa';
 import { StatsSkeleton } from '../common/Skeleton';
 
@@ -44,11 +45,12 @@ const ITDashboard = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
       <h1 className="text-3xl font-bold text-dental-red mb-6 flex items-center">
         <FaShieldAlt className="mr-3" /> IT Dashboard
       </h1>
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl p-4 shadow">
           <p className="text-gray-500 text-sm">Total Users</p>
@@ -59,54 +61,67 @@ const ITDashboard = () => {
           <p className="text-2xl font-bold">{stats.totalAppointments || 0}</p>
         </div>
         <div className="bg-yellow-50 rounded-xl p-4 shadow">
-          <p className="text-yellow-600 text-sm">Pending</p>
+          <p className="text-yellow-600 text-sm">Pending Appointments</p>
           <p className="text-2xl font-bold text-yellow-700">
             {stats.pendingAppointments || 0}
           </p>
         </div>
         <div className="bg-blue-50 rounded-xl p-4 shadow">
-          <p className="text-blue-600 text-sm">Today</p>
+          <p className="text-blue-600 text-sm">Today's Appointments</p>
           <p className="text-2xl font-bold text-blue-700">
             {stats.todayAppointments || 0}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      {/* Navigation Tiles */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <Link
           to="/clients"
-          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center"
+          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-center border border-transparent hover:border-dental-red"
         >
           <FaAddressBook className="text-4xl text-dental-red mx-auto mb-2" />
-          <h3 className="font-bold">Client Database</h3>
+          <h3 className="font-bold text-sm">Client Database</h3>
         </Link>
+        
         <Link
           to="/it/users"
-          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center"
+          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-center border border-transparent hover:border-dental-red"
         >
           <FaUsers className="text-4xl text-dental-red mx-auto mb-2" />
-          <h3 className="font-bold">Manage Users</h3>
+          <h3 className="font-bold text-sm">Manage Users</h3>
         </Link>
+
+        <Link
+          to="/it/team"
+          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-center border border-transparent hover:border-dental-red"
+        >
+          <FaUsersCog className="text-4xl text-dental-red mx-auto mb-2" />
+          <h3 className="font-bold text-sm">Manage PR Team</h3>
+        </Link>
+
         <Link
           to="/doctors"
-          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center"
+          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-center border border-transparent hover:border-dental-red"
         >
           <FaUserMd className="text-4xl text-dental-red mx-auto mb-2" />
-          <h3 className="font-bold">Doctors & Schedules</h3>
+          <h3 className="font-bold text-sm">Doctors & Schedules</h3>
         </Link>
+
         <Link
           to="/it/appointments"
-          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center"
+          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-center border border-transparent hover:border-dental-red"
         >
           <FaCalendar className="text-4xl text-dental-red mx-auto mb-2" />
-          <h3 className="font-bold">All Appointments</h3>
+          <h3 className="font-bold text-sm">All Appointments</h3>
         </Link>
+
         <Link
           to="/it/activity"
-          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center"
+          className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-center border border-transparent hover:border-dental-red"
         >
           <FaChartLine className="text-4xl text-dental-red mx-auto mb-2" />
-          <h3 className="font-bold">Activity Monitor</h3>
+          <h3 className="font-bold text-sm">Activity Monitor</h3>
         </Link>
       </div>
     </div>

@@ -23,6 +23,7 @@ import Register from './components/auth/Register';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
 
+
 // Client Components
 import BookAppointment from './components/client/BookAppointment';
 import ViewAppointments from './components/client/ViewAppointments';
@@ -41,6 +42,7 @@ import ManageUsers from './components/it/ManageUsers';
 import ManageDoctors from './components/it/ManageDoctors';
 import ManageAppointments from './components/it/ManageAppointments';
 import ActivityMonitor from './components/it/ActivityMonitor';
+import ManageTeam from './components/it/ManageTeam';
 
 import './styles/global.css';
 
@@ -173,6 +175,16 @@ function AppContent() {
               </PrivateRoute>
             }
           />
+          <Route
+  path="/it/team"
+  element={
+    <PrivateRoute roles={['it']}>
+      <ErrorBoundary>
+        <ManageTeam />
+      </ErrorBoundary>
+    </PrivateRoute>
+  }
+/>
           <Route
             path="/it/appointments"
             element={
