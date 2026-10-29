@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { 
-  FaUserMd, FaUserTie, FaPlus, FaEdit, FaTrash, 
-  FaMapMarkerAlt, FaImage 
-} from 'react-icons/fa';
+import { FaUserMd, FaUserTie, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt } from 'react-icons/fa';
 import Modal from '../common/Modal';
+import ImageUpload from '../common/ImageUpload'; // 👈 Import the new component
 
 const branchLabel = (b) =>
   b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands Shopping Centre' : '-';
@@ -21,10 +19,10 @@ const ManageTeam = () => {
     username: '',
     email: '',
     idNumber: '',
-    role: 'doctor', // 'doctor' or 'receptionist'
+    role: 'doctor',
     branch: 'westgate',
     specialization: '',
-    profilePicture: '',
+    profilePicture: '', // This will now hold a Base64 string
   };
 
   const [form, setForm] = useState(emptyForm);
@@ -36,12 +34,10 @@ const ManageTeam = () => {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      // Fetch both doctors and receptionists
       const [docRes, recRes] = await Promise.all([
         api.get('/api/users?role=doctor'),
         api.get('/api/users?role=receptionist')
       ]);
-      // Combine and sort by name
       const combined = [...docRes.data, ...recRes.data].sort((a, b) => 
         a.fullname.localeCompare(b.fullname)
       );
@@ -58,7 +54,7 @@ const ManageTeam = () => {
     try {
       const payload = { ...form };
       if (payload.role === 'receptionist') {
-        payload.specialization = ''; // Receptionists don't have specialties
+        payload.specialization = '';
       }
 
       if (editing) {
@@ -186,7 +182,7 @@ const ManageTeam = () => {
                 value={form.role} 
                 onChange={(e) => setForm({ ...form, role: e.target.value })} 
                 className="input-field"
-                disabled={!!editing} // Prevent changing role mid-way
+                disabled={!!editing}
               >
                 <option value="doctor">Doctor</option>
                 <option value="receptionist">Receptionist</option>
@@ -217,16 +213,17 @@ const ManageTeam = () => {
                 <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className="input-field" placeholder="e.g. Orthodontist" />
               </div>
             )}
-            <div className="md:col-span-2">
-              <label className="block font-medium mb-1">Profile Picture URL (optional)</label>
-              <div className="relative">
-                <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input type="url" value={form.profilePicture} onChange={(e) => setForm({ ...form, profilePicture: e.target.value })} className="input-field pl-10" placeholder="https://example.com/photo.jpg" />
-              </div>
+            
+            {/* 👇 NEW IMAGE UPLOAD COMPONENT */}
+            <div className="md:col-span-2 pt-2">
+              <ImageUpload 
+                currentImage={form.profilePicture} 
+                onImageChange={(base64) => setForm({ ...form, profilePicture: base64 })} 
+              />
             </div>
           </div>
 
-          <div className="flex space-x-4 pt-4">
+          <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button type="submit" className="flex-1 btn-primary">{editing ? 'Save Changes' : 'Add Member'}</button>
             <button type="button" onClick={() => setShowModal(false)} className="flex-1 btn-secondary">Cancel</button>
           </div>
