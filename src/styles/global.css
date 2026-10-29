@@ -29,21 +29,21 @@
     animation: shimmer 3s infinite;
   }
   .btn-secondary {
-    @apply bg-white/80 backdrop-blur-sm text-dental-red border-2 border-dental-red hover:bg-dental-red hover:text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 shadow-md hover:shadow-glow transform hover:-translate-y-1;
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-dental-red border-2 border-dental-red hover:bg-dental-red hover:text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 shadow-md hover:shadow-glow transform hover:-translate-y-1;
   }
   .card {
-    @apply bg-white/80 backdrop-blur-sm rounded-3xl shadow-glass p-6 transition-all duration-300 hover:shadow-glow hover:-translate-y-1 border border-white/20;
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-glass p-6 transition-all duration-300 hover:shadow-glow hover:-translate-y-1 border border-white/20 dark:border-gray-700;
   }
   .input-field {
-    @apply w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200/50 rounded-2xl focus:outline-none focus:border-dental-red focus:ring-2 focus:ring-dental-red/20 transition-all duration-300;
+    @apply w-full px-4 py-3 bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-600/50 rounded-2xl focus:outline-none focus:border-dental-red focus:ring-2 focus:ring-dental-red/20 transition-all duration-300 text-gray-800 dark:text-white;
   }
   .badge {
     @apply px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm;
   }
-  .badge-pending { @apply bg-yellow-100/80 text-yellow-800; }
-  .badge-approved { @apply bg-green-100/80 text-green-800; }
-  .badge-cancelled { @apply bg-red-100/80 text-red-800; }
-  .badge-completed { @apply bg-blue-100/80 text-blue-800; }
+  .badge-pending { @apply bg-yellow-100/80 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300; }
+  .badge-approved { @apply bg-green-100/80 text-green-800 dark:bg-green-900/30 dark:text-green-300; }
+  .badge-cancelled { @apply bg-red-100/80 text-red-800 dark:bg-red-900/30 dark:text-red-300; }
+  .badge-completed { @apply bg-blue-100/80 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300; }
 }
 
 @layer utilities {
@@ -67,7 +67,6 @@
 }
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
-  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
   background: #c41e3a;
@@ -75,6 +74,10 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #8b0000;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
 }
 
 /* Spinner */
@@ -89,4 +92,60 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* =========================================
+   GLOBAL DARK MODE OVERRIDES
+   ========================================= */
+
+.dark body {
+  @apply bg-gray-900 text-gray-100;
+}
+
+.dark .bg-white {
+  @apply bg-gray-800;
+}
+
+.dark .bg-gray-50 {
+  @apply bg-gray-900;
+}
+
+.dark .bg-gray-100 {
+  @apply bg-gray-800;
+}
+
+.dark .text-gray-800 {
+  @apply text-gray-100;
+}
+
+.dark .text-gray-700 {
+  @apply text-gray-300;
+}
+
+.dark .text-gray-600 {
+  @apply text-gray-400;
+}
+
+.dark .border-gray-200, 
+.dark .border-gray-100 {
+  @apply border-gray-700;
+}
+
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-sm,
+.dark .shadow-glass {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark .bg-red-50 {
+  @apply bg-red-900/20;
+}
+
+.dark .text-red-600 {
+  @apply text-red-400;
+}
+
+.dark .border-red-100 {
+  @apply border-red-900/30;
 }

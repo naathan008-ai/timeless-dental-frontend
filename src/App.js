@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -45,14 +46,13 @@ function AppContent() {
   const { pathname } = useLocation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Navbar />
       <main
         key={pathname}
         className="flex-grow container mx-auto px-4 py-6 animate-fade-in"
       >
         <Routes>
-          {/* Public */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
@@ -64,123 +64,23 @@ function AppContent() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/ai-chat" element={<AIChat />} />
 
-          {/* Client */}
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/appointments/book"
-            element={
-              <PrivateRoute roles={['client']}>
-                <BookAppointment />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/appointments/view"
-            element={
-              <PrivateRoute>
-                <ViewAppointments />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/appointments/book" element={<PrivateRoute roles={['client']}><BookAppointment /></PrivateRoute>} />
+          <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
 
-          {/* Doctors & Schedules — IT + Reception */}
-          <Route
-            path="/doctors"
-            element={
-              <PrivateRoute roles={['it', 'receptionist']}>
-                <ErrorBoundary>
-                  <ManageDoctors />
-                </ErrorBoundary>
-              </PrivateRoute>
-            }
-          />
+          <Route path="/doctors" element={<PrivateRoute roles={['it', 'receptionist']}><ErrorBoundary><ManageDoctors /></ErrorBoundary></PrivateRoute>} />
 
-          {/* Reception */}
-          <Route
-            path="/reception/dashboard"
-            element={
-              <PrivateRoute roles={['receptionist', 'it']}>
-                <ReceptionDashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/reception/clients"
-            element={
-              <PrivateRoute roles={['receptionist', 'it']}>
-                <ManageClients />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist', 'it']}><ReceptionDashboard /></PrivateRoute>} />
+          <Route path="/reception/clients" element={<PrivateRoute roles={['receptionist', 'it']}><ManageClients /></PrivateRoute>} />
 
-          {/* Clients database */}
-          <Route
-            path="/clients"
-            element={
-              <PrivateRoute roles={['it', 'receptionist']}>
-                <ManageClients />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/clients/:id"
-            element={
-              <PrivateRoute roles={['it', 'receptionist']}>
-                <ClientDetails />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/clients" element={<PrivateRoute roles={['it', 'receptionist']}><ManageClients /></PrivateRoute>} />
+          <Route path="/clients/:id" element={<PrivateRoute roles={['it', 'receptionist']}><ClientDetails /></PrivateRoute>} />
 
-          {/* IT */}
-          <Route
-            path="/it/dashboard"
-            element={
-              <PrivateRoute roles={['it']}>
-                <ErrorBoundary>
-                  <ITDashboard />
-                </ErrorBoundary>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/it/users"
-            element={
-              <PrivateRoute roles={['it']}>
-                <ErrorBoundary>
-                  <ManageUsers />
-                </ErrorBoundary>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/it/appointments"
-            element={
-              <PrivateRoute roles={['it']}>
-                <ErrorBoundary>
-                  <ManageAppointments />
-                </ErrorBoundary>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/it/activity"
-            element={
-              <PrivateRoute roles={['it']}>
-                <ErrorBoundary>
-                  <ActivityMonitor />
-                </ErrorBoundary>
-              </PrivateRoute>
-            }
-          />
+          <Route path="/it/dashboard" element={<PrivateRoute roles={['it']}><ErrorBoundary><ITDashboard /></ErrorBoundary></PrivateRoute>} />
+          <Route path="/it/users" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageUsers /></ErrorBoundary></PrivateRoute>} />
+          <Route path="/it/appointments" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageAppointments /></ErrorBoundary></PrivateRoute>} />
+          <Route path="/it/activity" element={<PrivateRoute roles={['it']}><ErrorBoundary><ActivityMonitor /></ErrorBoundary></PrivateRoute>} />
 
-          {/* Old URLs redirect */}
           <Route path="/it/doctors" element={<Navigate to="/doctors" replace />} />
           <Route path="/it/schedule" element={<Navigate to="/doctors" replace />} />
           <Route path="/reception/schedule" element={<Navigate to="/doctors" replace />} />
@@ -200,12 +100,14 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ScrollToTop />
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </BrowserRouter>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
