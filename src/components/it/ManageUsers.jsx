@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaUserPlus, FaEdit, FaTrash, FaShieldAlt, FaUserMinus } from 'react-icons/fa';
+import { FaUserPlus, FaEdit, FaTrash, FaShieldAlt, FaUserMinus, FaImage } from 'react-icons/fa';
 import Modal from '../common/Modal';
 
 const ManageUsers = () => {
@@ -9,15 +9,18 @@ const ManageUsers = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({
+
+  const emptyForm = {
     fullname: '',
     username: '',
     idNumber: '',
     email: '',
     role: 'client',
     branch: 'westgate',
+    profilePicture: '', // 👈 NEW
     isActive: true,
-  });
+  };
+  const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
     fetchUsers();
@@ -41,7 +44,6 @@ const ManageUsers = () => {
       if (payload.role !== 'receptionist' && payload.role !== 'doctor') {
         delete payload.branch;
       }
-
       if (editing) {
         await api.put(`/api/users/${editing._id}`, payload);
         toast.success('User updated');
@@ -51,15 +53,7 @@ const ManageUsers = () => {
       }
       setShowModal(false);
       setEditing(null);
-      setForm({
-        fullname: '',
-        username: '',
-        idNumber: '',
-        email: '',
-        role: 'client',
-        branch: 'westgate',
-        isActive: true,
-      });
+      setForm(emptyForm);
       fetchUsers();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Operation failed');
@@ -99,34 +93,16 @@ const ManageUsers = () => {
     }
   };
 
-  const branchLabel = (b) =>
-    b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands' : '-';
+  const branchLabel = (b) => b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands' : '-';
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="spinner"></div>
-      </div>
-    );
+  if (loading) return <div className="flex justify-center items-center h-64"><div className="spinner"></div></div>;
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Manage Users</h2>
         <button
-          onClick={() => {
-            setEditing(null);
-            setForm({
-              fullname: '',
-              username: '',
-              idNumber: '',
-              email: '',
-              role: 'client',
-              branch: 'westgate',
-              isActive: true,
-            });
-            setShowModal(true);
-          }}
+          onClick={() => { setEditing(null); setForm(emptyForm); setShowModal(true); }}
           className="btn-primary flex items-center"
         >
           <FaUserPlus className="mr-2" /> Add User
@@ -140,9 +116,7 @@ const ManageUsers = () => {
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">User</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Role</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Branch</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">
-                Receptionist ID
-              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Receptionist ID</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Status</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Actions</th>
             </tr>
@@ -151,77 +125,34 @@ const ManageUsers = () => {
             {users.map((u) => (
               <tr key={u._id} className="hover:bg-gray-50">
                 <td className="px-4 py-3">
-                  <p className="font-semibold">{u.fullname}</p>
-                  <p className="text-xs text-gray-500">{u.email}</p>
-                  <p className="text-xs text-gray-400">@{u.username}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+                      {u.profilePicture ? <img src={u.profilePicture} alt={u.fullname} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">{u.fullname.charAt(0)}</div>}
+                    </div>
+                    <div>
+                      <p className="font-semibold">{u.fullname}</p>
+                      <p className="text-xs text-gray-500">{u.email}</p>
+                      <p className="text-xs text-gray-400">@{u.username}</p>
+                    </div>
+                  </div>
                 </td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      u.role === 'it'
-                        ? 'bg-red-100 text-red-700'
-                        : u.role === 'receptionist'
-                        ? 'bg-blue-100 text-blue-700'
-                        : u.role === 'doctor'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
-                  >
+                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'it' ? 'bg-red-100 text-red-700' : u.role === 'receptionist' ? 'bg-blue-100 text-blue-700' : u.role === 'doctor' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
                     {u.role}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-sm">{branchLabel(u.branch)}</td>
                 <td className="px-4 py-3 font-mono text-sm">{u.receptionistId || '-'}</td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                    }`}
-                  >
+                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                     {u.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </td>
                 <td className="px-4 py-3 flex space-x-2">
-                  <button
-                    onClick={() => {
-                      setEditing(u);
-                      setForm({
-                        fullname: u.fullname || '',
-                        username: u.username || '',
-                        idNumber: u.idNumber || '',
-                        email: u.email || '',
-                        role: u.role || 'client',
-                        branch: u.branch || 'westgate',
-                        isActive: u.isActive !== false,
-                      });
-                      setShowModal(true);
-                    }}
-                    className="text-blue-600 hover:bg-blue-50 p-1 rounded"
-                  >
-                    <FaEdit />
-                  </button>
-                  {u.role !== 'it' && (
-                    <button
-                      onClick={() => handleGrantIT(u._id)}
-                      className="text-purple-600 hover:bg-purple-50 p-1 rounded"
-                    >
-                      <FaShieldAlt />
-                    </button>
-                  )}
-                  {u.role === 'it' && (
-                    <button
-                      onClick={() => handleRemoveIT(u._id)}
-                      className="text-orange-600 hover:bg-orange-50 p-1 rounded"
-                    >
-                      <FaUserMinus />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleDelete(u._id)}
-                    className="text-red-600 hover:bg-red-50 p-1 rounded"
-                  >
-                    <FaTrash />
-                  </button>
+                  <button onClick={() => { setEditing(u); setForm({...emptyForm, ...u, branch: u.branch || 'westgate', profilePicture: u.profilePicture || ''}); setShowModal(true); }} className="text-blue-600 hover:bg-blue-50 p-1 rounded"><FaEdit /></button>
+                  {u.role !== 'it' && <button onClick={() => handleGrantIT(u._id)} className="text-purple-600 hover:bg-purple-50 p-1 rounded"><FaShieldAlt /></button>}
+                  {u.role === 'it' && <button onClick={() => handleRemoveIT(u._id)} className="text-orange-600 hover:bg-orange-50 p-1 rounded"><FaUserMinus /></button>}
+                  <button onClick={() => handleDelete(u._id)} className="text-red-600 hover:bg-red-50 p-1 rounded"><FaTrash /></button>
                 </td>
               </tr>
             ))}
@@ -229,48 +160,20 @@ const ManageUsers = () => {
         </table>
       </div>
 
-      <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title={editing ? 'Edit User' : 'New User'}
-      >
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editing ? 'Edit User' : 'New User'}>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={form.fullname}
-            onChange={(e) => setForm({ ...form, fullname: e.target.value })}
-            className="input-field"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Username"
-            value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
-            className="input-field"
-            required
-          />
-          <input
-            type="text"
-            placeholder="ID (00-0000000A00)"
-            value={form.idNumber}
-            onChange={(e) => setForm({ ...form, idNumber: e.target.value })}
-            className="input-field"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="input-field"
-            required
-          />
-          <select
-            value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value })}
-            className="input-field"
-          >
+          <input type="text" placeholder="Full Name" value={form.fullname} onChange={(e) => setForm({ ...form, fullname: e.target.value })} className="input-field" required />
+          <input type="text" placeholder="Username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="input-field" required />
+          <input type="text" placeholder="ID (00-0000000A00)" value={form.idNumber} onChange={(e) => setForm({ ...form, idNumber: e.target.value })} className="input-field" />
+          <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="input-field" required />
+          
+          {/* PROFILE PICTURE URL FIELD */}
+          <div className="relative">
+            <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input type="url" placeholder="Profile Picture URL (optional)" value={form.profilePicture} onChange={(e) => setForm({ ...form, profilePicture: e.target.value })} className="input-field pl-10" />
+          </div>
+
+          <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="input-field">
             <option value="client">Client</option>
             <option value="receptionist">Receptionist</option>
             <option value="doctor">Doctor</option>
@@ -280,12 +183,7 @@ const ManageUsers = () => {
           {(form.role === 'receptionist' || form.role === 'doctor') && (
             <div>
               <label className="block font-medium mb-1">Branch *</label>
-              <select
-                value={form.branch}
-                onChange={(e) => setForm({ ...form, branch: e.target.value })}
-                className="input-field"
-                required
-              >
+              <select value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value })} className="input-field" required>
                 <option value="westgate">Westgate Mall</option>
                 <option value="newlands">Newlands Shopping Centre</option>
               </select>
@@ -293,35 +191,13 @@ const ManageUsers = () => {
           )}
 
           <div className="flex space-x-4">
-            <label>
-              <input
-                type="radio"
-                checked={form.isActive}
-                onChange={() => setForm({ ...form, isActive: true })}
-              />{' '}
-              Active
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={!form.isActive}
-                onChange={() => setForm({ ...form, isActive: false })}
-              />{' '}
-              Inactive
-            </label>
+            <label><input type="radio" checked={form.isActive} onChange={() => setForm({ ...form, isActive: true })} /> Active</label>
+            <label><input type="radio" checked={!form.isActive} onChange={() => setForm({ ...form, isActive: false })} /> Inactive</label>
           </div>
 
           <div className="flex space-x-4">
-            <button type="submit" className="flex-1 btn-primary">
-              {editing ? 'Update' : 'Create'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              className="flex-1 btn-secondary"
-            >
-              Cancel
-            </button>
+            <button type="submit" className="flex-1 btn-primary">{editing ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={() => setShowModal(false)} className="flex-1 btn-secondary">Cancel</button>
           </div>
         </form>
       </Modal>

@@ -51,6 +51,7 @@ const Footer = () => {
             <ul className="space-y-2 text-gray-400">
               <li><Link to="/" className="hover:text-red-400 transition">Home</Link></li>
               <li><Link to="/services" className="hover:text-red-400 transition">Our Services</Link></li>
+              <li><Link to="/team" className="hover:text-red-400 transition">Our Team</Link></li> {/* 👈 NEW LINK */}
               <li><Link to="/appointments/book" className="hover:text-red-400 transition">Book Appointment</Link></li>
               <li><Link to="/appointments/view" className="hover:text-red-400 transition">My Appointments</Link></li>
               <li><Link to="/ai-chat" className="hover:text-red-400 transition">AI Chat</Link></li>
@@ -68,15 +69,11 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-red-400 mt-1" />
-                <span>timelessdentalclinic@gmail.com</span>
+                <span>info@timelessdental.com</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-red-400 mt-1" />
                 <span>Westgate Mall, Harare</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <FaMapMarkerAlt className="text-red-400 mt-1" />
-                <span>Newlands Shopping Centre, Harare</span>
               </li>
             </ul>
           </div>
@@ -93,8 +90,7 @@ const Footer = () => {
                   <p className="text-sm text-gray-500">Sunday: Closed</p>
                 </div>
               </li>
-              <li className="text-sm text-red-400"> Westgate Emergency: (024)2333271</li>
-              <li className="text-sm text-red-400">Newlands Emergency: (024)2746995</li>
+              <li className="text-sm text-red-400">Emergency: (024)2333271</li>
             </ul>
           </div>
         </div>

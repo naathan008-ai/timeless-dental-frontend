@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaUser, FaSignOutAlt, FaHome, FaBars, FaTimes, FaTooth } from 'react-icons/fa';
-import { RiCalendarCheckLine, RiRobotLine, RiMessage2Line, RiServiceLine } from 'react-icons/ri';
+import { RiCalendarCheckLine, RiRobotLine, RiMessage2Line, RiServiceLine, RiTeamLine } from 'react-icons/ri';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
@@ -57,6 +57,9 @@ const Navbar = () => {
                 <Link to="/services" className="text-gray-700 dark:text-gray-300 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium whitespace-nowrap">
                   <RiServiceLine className="mr-1 text-base" /> Services
                 </Link>
+                <Link to="/team" className="text-gray-700 dark:text-gray-300 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium whitespace-nowrap">
+                  <RiTeamLine className="mr-1 text-base" /> Our Team
+                </Link>
                 <Link to="/locations" className="text-gray-700 dark:text-gray-300 hover:text-dental-red transition-all duration-300 hover:scale-105 font-medium whitespace-nowrap">
                   Locations
                 </Link>
@@ -67,8 +70,12 @@ const Navbar = () => {
                 <ThemeToggle />
 
                 <div className="flex items-center space-x-2 border-l-2 border-gray-200/50 dark:border-gray-700 pl-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-50 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center shadow-inner">
-                    <FaUser className="text-dental-red text-sm" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-50 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center shadow-inner overflow-hidden">
+                    {user?.profilePicture ? (
+                      <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <FaUser className="text-dental-red text-sm" />
+                    )}
                   </div>
                   <span className="text-gray-700 dark:text-gray-200 font-medium text-sm whitespace-nowrap">{user?.username}</span>
                   <span className="text-xs bg-gray-200/80 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-1 rounded-full capitalize font-medium whitespace-nowrap">{user?.role}</span>
@@ -87,6 +94,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/services" className="text-gray-700 dark:text-gray-300 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium whitespace-nowrap">
                   <RiServiceLine className="mr-1 text-base" /> Services
+                </Link>
+                <Link to="/team" className="text-gray-700 dark:text-gray-300 hover:text-dental-red transition-all duration-300 hover:scale-105 flex items-center font-medium whitespace-nowrap">
+                  <RiTeamLine className="mr-1 text-base" /> Our Team
                 </Link>
                 <Link to="/locations" className="text-gray-700 dark:text-gray-300 hover:text-dental-red transition-all duration-300 hover:scale-105 font-medium whitespace-nowrap">
                   Locations
@@ -122,8 +132,12 @@ const Navbar = () => {
             {isAuthenticated ? (
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 px-3 py-3 bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl">
-                  <div className="w-10 h-10 bg-red-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                    <FaUser className="text-dental-red text-lg" />
+                  <div className="w-10 h-10 bg-red-100 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
+                    {user?.profilePicture ? (
+                      <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <FaUser className="text-dental-red text-lg" />
+                    )}
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 dark:text-gray-200">{user?.username}</p>
@@ -151,6 +165,9 @@ const Navbar = () => {
                 <Link to="/services" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>
                   <RiServiceLine className="inline mr-2 text-base" /> Services
                 </Link>
+                <Link to="/team" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>
+                  <RiTeamLine className="inline mr-2 text-base" /> Our Team
+                </Link>
                 <Link to="/locations" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>Locations</Link>
                 <Link to="/contact" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>
                   <RiMessage2Line className="inline mr-2 text-base" /> Contact
@@ -167,6 +184,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/services" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>
                   <RiServiceLine className="inline mr-2 text-base" /> Services
+                </Link>
+                <Link to="/team" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>
+                  <RiTeamLine className="inline mr-2 text-base" /> Our Team
                 </Link>
                 <Link to="/locations" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>Locations</Link>
                 <Link to="/contact" className="block px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-800 hover:text-dental-red rounded-xl transition-all duration-300 hover:scale-105" onClick={() => setMenuOpen(false)}>

@@ -25,7 +25,7 @@ const Home = () => {
             <div className="flex justify-center mb-6">
               <div className="flex items-center space-x-1 animate-float">
                 <FaTooth className="text-6xl md:text-7xl dental-icon" />
-                <FaTooth className="text-7xl md:text-8xl dental-icon" />
+                <FaTooth className="text-8xl md:text-8xl dental-icon" />
                 <FaTooth className="text-6xl md:text-7xl dental-icon" />
               </div>
             </div>

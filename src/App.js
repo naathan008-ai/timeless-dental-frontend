@@ -12,33 +12,13 @@ import ScrollToTop from './components/common/ScrollToTop';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
+import Team from './pages/Team'; // 👈 NEW IMPORT
 import Dashboard from './pages/Dashboard';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import ForgotPassword from './components/auth/ForgotPassword';
-import ResetPassword from './components/auth/ResetPassword';
-import BookAppointment from './components/client/BookAppointment';
-import ViewAppointments from './components/client/ViewAppointments';
-import AIChat from './components/client/AIChat';
-import ReceptionDashboard from './components/receptionist/ReceptionDashboard';
-import ITDashboard from './components/it/ITDashboard';
-import ManageUsers from './components/it/ManageUsers';
-import ManageDoctors from './components/it/ManageDoctors';
-import ManageAppointments from './components/it/ManageAppointments';
-import ManageClients from './components/shared/ManageClients';
-import ClientDetails from './components/shared/ClientDetails';
-import ActivityMonitor from './components/it/ActivityMonitor';
-import Locations from './components/shared/Locations';
-import ContactUs from './components/shared/ContactUs';
-import './styles/global.css';
+// ... other imports ...
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
+    queries: { staleTime: 1000 * 60 * 5, refetchOnWindowFocus: false, retry: 1 },
   },
 });
 
@@ -48,51 +28,19 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Navbar />
-      <main
-        key={pathname}
-        className="flex-grow container mx-auto px-4 py-6 animate-fade-in"
-      >
+      <main key={pathname} className="flex-grow container mx-auto px-4 py-6 animate-fade-in">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/team" element={<Team />} /> {/* 👈 NEW ROUTE */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/locations" element={<Locations />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/ai-chat" element={<AIChat />} />
-
-          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-          <Route path="/appointments/book" element={<PrivateRoute roles={['client']}><BookAppointment /></PrivateRoute>} />
-          <Route path="/appointments/view" element={<PrivateRoute><ViewAppointments /></PrivateRoute>} />
-
-          <Route path="/doctors" element={<PrivateRoute roles={['it', 'receptionist']}><ErrorBoundary><ManageDoctors /></ErrorBoundary></PrivateRoute>} />
-
-          <Route path="/reception/dashboard" element={<PrivateRoute roles={['receptionist', 'it']}><ReceptionDashboard /></PrivateRoute>} />
-          <Route path="/reception/clients" element={<PrivateRoute roles={['receptionist', 'it']}><ManageClients /></PrivateRoute>} />
-
-          <Route path="/clients" element={<PrivateRoute roles={['it', 'receptionist']}><ManageClients /></PrivateRoute>} />
-          <Route path="/clients/:id" element={<PrivateRoute roles={['it', 'receptionist']}><ClientDetails /></PrivateRoute>} />
-
-          <Route path="/it/dashboard" element={<PrivateRoute roles={['it']}><ErrorBoundary><ITDashboard /></ErrorBoundary></PrivateRoute>} />
-          <Route path="/it/users" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageUsers /></ErrorBoundary></PrivateRoute>} />
-          <Route path="/it/appointments" element={<PrivateRoute roles={['it']}><ErrorBoundary><ManageAppointments /></ErrorBoundary></PrivateRoute>} />
-          <Route path="/it/activity" element={<PrivateRoute roles={['it']}><ErrorBoundary><ActivityMonitor /></ErrorBoundary></PrivateRoute>} />
-
-          <Route path="/it/doctors" element={<Navigate to="/doctors" replace />} />
-          <Route path="/it/schedule" element={<Navigate to="/doctors" replace />} />
-          <Route path="/reception/schedule" element={<Navigate to="/doctors" replace />} />
-
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* ... keep the rest of your routes ... */}
         </Routes>
       </main>
       <Footer />
-      <Toaster
-        position="top-right"
-        toastOptions={{ className: 'rounded-2xl shadow-glass' }}
-      />
+      <Toaster position="top-right" toastOptions={{ className: 'rounded-2xl shadow-glass' }} />
     </div>
   );
 }
