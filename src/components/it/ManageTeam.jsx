@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaUserMd, FaUserTie, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
+import { FaUserMd, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import ImageUpload from '../common/ImageUpload';
 
@@ -19,7 +19,7 @@ const ManageTeam = () => {
     username: '',
     email: '',
     idNumber: '',
-    role: '', // 👈 Now a free-text field
+    role: '',
     branch: 'westgate',
     specialization: '',
     profilePicture: '',
@@ -34,7 +34,6 @@ const ManageTeam = () => {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      // Fetch all users, then filter out clients on the frontend for display
       const res = await api.get('/api/users');
       const staff = res.data.filter(u => u.role !== 'client' && u.role !== 'it').sort((a, b) => 
         a.fullname.localeCompare(b.fullname)
@@ -49,26 +48,25 @@ const ManageTeam = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.role.trim()) {
-      return toast.error('Please enter a role');
-    }
+    if (!form.role.trim()) return toast.error('Please enter a role');
 
     try {
       if (editing) {
         await api.put(`/api/users/${editing._id}`, form);
         toast.success('Team member updated');
       } else {
-        // Generate a random password for them so the backend doesn't fail
-        const randomPassword = Math.random().toString(36).slice(-10);
-        await api.post('/api/users', { ...form, password: randomPassword });
+        await api.post('/api/users', form);
         toast.success('Team member added');
       }
+      
+      // 👇 CLOSE MODAL IMMEDIATELY ON SUCCESS
       setShowModal(false);
       setEditing(null);
       setForm(emptyForm);
       fetchTeam();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Operation failed');
+      // Note: If it fails, we intentionally leave the modal open so you don't lose your data
     }
   };
 
@@ -176,7 +174,6 @@ const ManageTeam = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             
-            {/* 👇 MANUAL ROLE INPUT */}
             <div>
               <label className="block font-medium mb-1">Role / Title <span className="text-red-500">*</span></label>
               <div className="relative">
@@ -186,7 +183,7 @@ const ManageTeam = () => {
                   value={form.role} 
                   onChange={(e) => setForm({ ...form, role: e.target.value })} 
                   className="input-field pl-10" 
-                  placeholder="e.g. Orthodontist, Hygienist, Manager" 
+                  placeholder="e.g. Orthodontist, Manager" 
                   required 
                 />
               </div>
