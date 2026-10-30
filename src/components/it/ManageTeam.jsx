@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaUserMd, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase, FaExclamationTriangle } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase, FaExclamationTriangle } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import ImageUpload from '../common/ImageUpload';
 
@@ -18,11 +18,9 @@ const ManageTeam = () => {
   const emptyForm = {
     fullname: '',
     username: '',
-    email: '',
-    idNumber: '',
     role: '',
-    branch: 'westgate',
     specialization: '',
+    branch: 'westgate',
     profilePicture: '',
   };
 
@@ -35,16 +33,8 @@ const ManageTeam = () => {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      // 👇 USING THE NEW FAST ENDPOINT
-      const res = await api.get('/api/users/staff');
-      
-      // Filter out IT admins so they don't show up in the public team manager
-      const filtered = res.data.filter(u => {
-        const roleStr = u.role ? u.role.toLowerCase() : '';
-        return roleStr !== 'it';
-      });
-      
-      setTeam(filtered);
+      const res = await api.get('/api/team'); 
+      setTeam(res.data);
     } catch (err) {
       toast.error('Failed to load team members');
       console.error(err);
@@ -60,10 +50,10 @@ const ManageTeam = () => {
 
     try {
       if (editing) {
-        await api.put(`/api/users/${editing._id}`, form);
+        await api.put(`/api/team/${editing._id}`, form);
         toast.success('Team member updated');
       } else {
-        await api.post('/api/users', form);
+        await api.post('/api/team', form);
         toast.success('Team member added');
       }
       
@@ -73,7 +63,7 @@ const ManageTeam = () => {
       fetchTeam();
     } catch (err) {
       console.error(err);
-      setErrorMsg(err.response?.data?.message || 'Server error. Check the console for details.');
+      setErrorMsg(err.response?.data?.message || 'Server error.');
       toast.error('Failed to save');
     }
   };
@@ -81,7 +71,7 @@ const ManageTeam = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Permanently remove this person from the team?')) return;
     try {
-      await api.delete(`/api/users/${id}`);
+      await api.delete(`/api/team/${id}`);
       toast.success('Team member removed');
       fetchTeam();
     } catch (err) {
@@ -95,11 +85,9 @@ const ManageTeam = () => {
     setForm({
       fullname: member.fullname || '',
       username: member.username || '',
-      email: member.email || '',
-      idNumber: member.idNumber || '',
       role: member.role || '',
-      branch: member.branch || 'westgate',
       specialization: member.specialization || '',
+      branch: member.branch || 'westgate',
       profilePicture: member.profilePicture || '',
     });
     setShowModal(true);
@@ -112,7 +100,7 @@ const ManageTeam = () => {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-3xl font-bold text-dental-red flex items-center">
-            <FaUserMd className="mr-3" /> Manage PR Team
+            <FaUsers className="mr-3" /> Manage Team Page
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             Add, edit, or remove staff displayed on the public "Our Team" page.
@@ -143,7 +131,7 @@ const ManageTeam = () => {
                     <img src={member.profilePicture} alt={member.fullname} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-red-100 dark:bg-gray-800 flex items-center justify-center">
-                      <FaUserMd className="text-3xl text-dental-red" />
+                      <FaUsers className="text-3xl text-dental-red" />
                     </div>
                   )}
                 </div>
@@ -213,13 +201,8 @@ const ManageTeam = () => {
             </div>
             
             <div>
-              <label className="block font-medium mb-1">Username <span className="text-red-500">*</span></label>
-              <input type="text" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="input-field" required disabled={!!editing} />
-            </div>
-            
-            <div>
-              <label className="block font-medium mb-1">Email <span className="text-red-500">*</span></label>
-              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="input-field" required />
+              <label className="block font-medium mb-1">Username (optional)</label>
+              <input type="text" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="input-field" />
             </div>
             
             <div>
@@ -231,7 +214,7 @@ const ManageTeam = () => {
               </select>
             </div>
             
-            <div>
+            <div className="md:col-span-2">
               <label className="block font-medium mb-1">Specialization (optional)</label>
               <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className="input-field" placeholder="e.g. Braces & Aligners" />
             </div>

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { 
-  FaUserMd, FaMapMarkerAlt, FaTooth, FaGlobe, 
-  FaPhone, FaEnvelope, FaInfoCircle, FaTimes 
-} from 'react-icons/fa';
+import { FaUserMd, FaMapMarkerAlt, FaTooth, FaGlobe, FaInfoCircle, FaTimes } from 'react-icons/fa';
 
 const branchLabel = (b) =>
   b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands Shopping Centre' : b === 'all' ? 'All Branches' : 'Unassigned';
@@ -19,7 +16,8 @@ const Team = () => {
 
   const fetchStaff = async () => {
     try {
-      const res = await api.get('/api/users/public/staff');
+      // 👇 NEW PUBLIC ENDPOINT
+      const res = await api.get('/api/team/public');
       setStaff(res.data);
     } catch (err) {
       console.error('Failed to load staff', err);
@@ -30,7 +28,7 @@ const Team = () => {
 
   const westgateStaff = staff.filter((s) => s.branch === 'westgate');
   const newlandsStaff = staff.filter((s) => s.branch === 'newlands');
-  const allBranchesStaff = staff.filter((s) => s.branch === 'all' || !s.branch);
+  const allBranchesStaff = staff.filter((s) => s.branch === 'all');
 
   const StaffCard = ({ member }) => (
     <div 
@@ -133,6 +131,7 @@ const Team = () => {
               </div>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{selectedMember.fullname}</h2>
               <p className="text-dental-red font-bold uppercase tracking-wider text-sm mt-1">{selectedMember.role}</p>
+              
               {selectedMember.specialization && (
                 <span className="text-xs bg-red-50 text-dental-red px-3 py-1 rounded-full mt-2 font-medium">
                   {selectedMember.specialization}
@@ -146,16 +145,10 @@ const Team = () => {
                   <FaMapMarkerAlt className="text-dental-red text-lg mr-3" />
                   <span className="font-medium">{branchLabel(selectedMember.branch)}</span>
                 </div>
-                {selectedMember.phoneNumber && (
+                {selectedMember.username && (
                   <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl">
-                    <FaPhone className="text-dental-red text-lg mr-3" />
-                    <span className="font-medium">{selectedMember.phoneNumber}</span>
-                  </div>
-                )}
-                {selectedMember.email && (
-                  <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl">
-                    <FaEnvelope className="text-dental-red text-lg mr-3" />
-                    <span className="font-medium truncate">{selectedMember.email}</span>
+                    <FaInfoCircle className="text-dental-red text-lg mr-3" />
+                    <span className="font-medium">@{selectedMember.username}</span>
                   </div>
                 )}
               </div>
