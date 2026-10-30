@@ -64,6 +64,7 @@ The system provides real-time appointment booking, doctor scheduling across bran
 - Manage doctor schedules
 - Monitor all activity logs
 - Full dashboard with system statistics
+Manage Team Members(Staff)
 
 ### 🤖 AI Assistant
 - Publicly accessible — no login required

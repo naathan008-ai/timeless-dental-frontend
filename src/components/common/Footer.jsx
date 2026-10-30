@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaTooth, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import { FaTooth, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaTiktok } from 'react-icons/fa';
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -39,27 +39,14 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-red-400 transition"
-                aria-label="Twitter"
+                aria-label="TikTok"
               >
-                <FaTwitter size={22} />
+                <FaTiktok size={22} />
               </a>
             </div>
           </div>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><Link to="/" className="hover:text-red-400 transition">Home</Link></li>
-              <li><Link to="/services" className="hover:text-red-400 transition">Our Services</Link></li>
-              <li><Link to="/team" className="hover:text-red-400 transition">Our Team</Link></li> {/* 👈 NEW LINK */}
-              <li><Link to="/appointments/book" className="hover:text-red-400 transition">Book Appointment</Link></li>
-              <li><Link to="/appointments/view" className="hover:text-red-400 transition">My Appointments</Link></li>
-              <li><Link to="/ai-chat" className="hover:text-red-400 transition">AI Chat</Link></li>
-              <li><Link to="/locations" className="hover:text-red-400 transition">Locations</Link></li>
-              <li><Link to="/contact" className="hover:text-red-400 transition">Contact</Link></li>
-            </ul>
-          </div>
-
+          
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
             <ul className="space-y-3 text-gray-400">
@@ -84,11 +71,12 @@ const Footer = () => {
               <li className="flex items-start space-x-3">
                 <FaClock className="text-red-400 mt-1" />
                 <div>
-                  <p>Mon–Fri: 9:00–17:00</p>
-                  <p className="text-sm text-gray-500">Last appointment: 16:00</p>
+                  <p>Mon–Fri: 9:00–17:00,</p>
                   <p>Sat: 9:00–13:00</p>
-                  <p className="text-sm text-gray-500">Sunday: Closed</p>
+                  <p>Sunday: Closed</p>
+                  <p className="text-sm text-gray-500">Last appointment: 16:00</p>
                 </div>
+
               </li>
               <li className="text-sm text-red-400">Emergency: (024)2333271</li>
             </ul>

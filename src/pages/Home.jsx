@@ -122,7 +122,7 @@ const Home = () => {
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-3">Expert Dentists</h3>
             <p className="text-gray-600 mb-4">
-              Our team of experienced professionals provides comprehensive dental care.
+              Our team of experienced professionals provides comprehensive dental care.With the finest equipment and techniques, we ensure your comfort and safety.
             </p>
             <Link
               to="/services"
@@ -130,138 +130,6 @@ const Home = () => {
             >
               Learn More <FaArrowRight className="ml-1" />
             </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* ---------- STATS SECTION ---------- */}
-      <div className="bg-gray-50 py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-dental-red mb-2">2</div>
-              <p className="text-gray-600">Branches</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-dental-red mb-2">1000+</div>
-              <p className="text-gray-600">Happy Patients</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-dental-red mb-2">10+</div>
-              <p className="text-gray-600">Years Experience</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-dental-red mb-2">24/7</div>
-              <p className="text-gray-600">AI Support</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ---------- SERVICES SECTION ---------- */}
-      <div className="container mx-auto px-4 py-20">
-        <div className="flex justify-between items-end mb-10 flex-wrap gap-4">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-              Our Services
-            </h2>
-            <p className="text-gray-600 max-w-xl">
-              A full spectrum of dental services under one roof, delivered by specialists who care.
-            </p>
-          </div>
-          <Link
-            to="/services"
-            className="btn-secondary inline-flex items-center"
-          >
-            View All Services <FaArrowRight className="ml-2" />
-          </Link>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-glow transition-all duration-300 hover:-translate-y-1">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-red-700 text-white shadow mb-4">
-              <FaTooth className="text-xl" />
-            </div>
-            <h4 className="font-bold text-gray-800 mb-2 text-lg">General Dentistry</h4>
-            <p className="text-gray-600 text-sm">
-              Check-ups, cleanings, and preventive care to keep your smile healthy.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-glow transition-all duration-300 hover:-translate-y-1">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-red-600 text-white shadow mb-4">
-              <FaSmile className="text-xl" />
-            </div>
-            <h4 className="font-bold text-gray-800 mb-2 text-lg">Cosmetic Dentistry</h4>
-            <p className="text-gray-600 text-sm">
-              Teeth whitening, veneers, and smile makeovers for a brighter smile.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-glow transition-all duration-300 hover:-translate-y-1">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 text-white shadow mb-4">
-              <FaHeart className="text-xl" />
-            </div>
-            <h4 className="font-bold text-gray-800 mb-2 text-lg">Emergency Care</h4>
-            <p className="text-gray-600 text-sm">
-              Immediate relief and expert care for dental emergencies, day or night.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* ---------- TESTIMONIALS / TRUST SECTION ---------- */}
-      <div className="bg-gray-50 py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
-            Trusted by Hundreds of Patients
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="card">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaUsers className="text-dental-red" />
-                </div>
-                <div className="ml-4">
-                  <p className="font-semibold text-gray-800">Friendly Staff</p>
-                  <div className="text-yellow-400 text-sm">★★★★★</div>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">
-                "The team is incredibly welcoming and professional. I've never felt more comfortable at a dentist."
-              </p>
-            </div>
-
-            <div className="card">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaAward className="text-dental-red" />
-                </div>
-                <div className="ml-4">
-                  <p className="font-semibold text-gray-800">Modern Equipment</p>
-                  <div className="text-yellow-400 text-sm">★★★★★</div>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">
-                "Their state-of-the-art technology made my treatment fast and painless."
-              </p>
-            </div>
-
-            <div className="card">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaClock className="text-dental-red" />
-                </div>
-                <div className="ml-4">
-                  <p className="font-semibold text-gray-800">Quick Booking</p>
-                  <div className="text-yellow-400 text-sm">★★★★★</div>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">
-                "Booking online was so easy and the AI assistant answered all my questions instantly."
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -282,12 +150,7 @@ const Home = () => {
             >
               Book Now <FaArrowRight className="ml-2" />
             </Link>
-            <Link
-              to="/services"
-              className="btn-secondary border-white text-white hover:bg-red-700 inline-flex items-center"
-            >
-              <RiServiceLine className="mr-2 text-xl" /> Explore Services
-            </Link>
+            
           </div>
         </div>
       </div>
