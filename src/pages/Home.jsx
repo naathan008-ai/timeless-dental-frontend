@@ -26,7 +26,7 @@ const Home = () => {
               <div className="flex items-center space-x-1 animate-float">
                 <FaTooth className="text-6xl md:text-7xl dental-icon" />
                 <FaTooth className="text-8xl md:text-8xl dental-icon" />
-                <FaTooth className="text-6xl md:text-7xl dental-icon" />
+                <FaTooth className="text-6xl md:text-6xl dental-icon" />
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-wide">

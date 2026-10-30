@@ -45,7 +45,8 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-white py-12 px-4">
       <div className="max-w-md w-full card animate-fadeIn">
         <div className="text-center mb-8">
-          <FaTooth className="text-5xl text-dental-red mx-auto mb-4" />
+          <FaTooth className="text-5xl text-dental-red mx-auto mb-4" /> br
+          
           <h2 className="text-3xl font-bold text-gray-800">Sign In</h2>
           <p className="text-gray-600 mt-2">Choose your role to login</p>
         </div>

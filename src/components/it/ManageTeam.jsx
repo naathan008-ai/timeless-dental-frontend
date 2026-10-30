@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaUserMd, FaUserTie, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaUserMd, FaUserTie, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
 import Modal from '../common/Modal';
-import ImageUpload from '../common/ImageUpload'; // 👈 Import the new component
+import ImageUpload from '../common/ImageUpload';
 
 const branchLabel = (b) =>
-  b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands Shopping Centre' : '-';
+  b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands Shopping Centre' : b === 'all' ? 'All Branches' : '-';
 
 const ManageTeam = () => {
   const [team, setTeam] = useState([]);
@@ -19,10 +19,10 @@ const ManageTeam = () => {
     username: '',
     email: '',
     idNumber: '',
-    role: 'doctor',
+    role: '', // 👈 Now a free-text field
     branch: 'westgate',
     specialization: '',
-    profilePicture: '', // This will now hold a Base64 string
+    profilePicture: '',
   };
 
   const [form, setForm] = useState(emptyForm);
@@ -34,14 +34,12 @@ const ManageTeam = () => {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      const [docRes, recRes] = await Promise.all([
-        api.get('/api/users?role=doctor'),
-        api.get('/api/users?role=receptionist')
-      ]);
-      const combined = [...docRes.data, ...recRes.data].sort((a, b) => 
+      // Fetch all users, then filter out clients on the frontend for display
+      const res = await api.get('/api/users');
+      const staff = res.data.filter(u => u.role !== 'client' && u.role !== 'it').sort((a, b) => 
         a.fullname.localeCompare(b.fullname)
       );
-      setTeam(combined);
+      setTeam(staff);
     } catch (err) {
       toast.error('Failed to load team members');
     } finally {
@@ -51,17 +49,18 @@ const ManageTeam = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const payload = { ...form };
-      if (payload.role === 'receptionist') {
-        payload.specialization = '';
-      }
+    if (!form.role.trim()) {
+      return toast.error('Please enter a role');
+    }
 
+    try {
       if (editing) {
-        await api.put(`/api/users/${editing._id}`, payload);
+        await api.put(`/api/users/${editing._id}`, form);
         toast.success('Team member updated');
       } else {
-        await api.post('/api/users', payload);
+        // Generate a random password for them so the backend doesn't fail
+        const randomPassword = Math.random().toString(36).slice(-10);
+        await api.post('/api/users', { ...form, password: randomPassword });
         toast.success('Team member added');
       }
       setShowModal(false);
@@ -74,7 +73,7 @@ const ManageTeam = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Remove this person from the team? This will delete their account.')) return;
+    if (!window.confirm('Remove this person from the team?')) return;
     try {
       await api.delete(`/api/users/${id}`);
       toast.success('Team member removed');
@@ -91,7 +90,7 @@ const ManageTeam = () => {
       username: member.username || '',
       email: member.email || '',
       idNumber: member.idNumber || '',
-      role: member.role || 'doctor',
+      role: member.role || '',
       branch: member.branch || 'westgate',
       specialization: member.specialization || '',
       profilePicture: member.profilePicture || '',
@@ -109,7 +108,7 @@ const ManageTeam = () => {
             <FaUserMd className="mr-3" /> Manage PR Team
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Add, edit, or remove Doctors and Receptionists displayed on the public "Our Team" page.
+            Add, edit, or remove staff displayed on the public "Our Team" page.
           </p>
         </div>
         <button
@@ -136,13 +135,13 @@ const ManageTeam = () => {
                     <img src={member.profilePicture} alt={member.fullname} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-red-100 dark:bg-gray-800 flex items-center justify-center">
-                      {member.role === 'doctor' ? <FaUserMd className="text-3xl text-dental-red" /> : <FaUserTie className="text-3xl text-blue-600" />}
+                      <FaUserMd className="text-3xl text-dental-red" />
                     </div>
                   )}
                 </div>
                 
                 <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg">{member.fullname}</h3>
-                <p className={`text-xs font-semibold uppercase tracking-wider mb-2 ${member.role === 'doctor' ? 'text-dental-red' : 'text-blue-600'}`}>
+                <p className="text-xs font-semibold uppercase tracking-wider mb-2 text-dental-red">
                   {member.role}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center mb-2">
@@ -176,45 +175,52 @@ const ManageTeam = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
+            
+            {/* 👇 MANUAL ROLE INPUT */}
             <div>
-              <label className="block font-medium mb-1">Role <span className="text-red-500">*</span></label>
-              <select 
-                value={form.role} 
-                onChange={(e) => setForm({ ...form, role: e.target.value })} 
-                className="input-field"
-                disabled={!!editing}
-              >
-                <option value="doctor">Doctor</option>
-                <option value="receptionist">Receptionist</option>
-              </select>
+              <label className="block font-medium mb-1">Role / Title <span className="text-red-500">*</span></label>
+              <div className="relative">
+                <FaBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input 
+                  type="text" 
+                  value={form.role} 
+                  onChange={(e) => setForm({ ...form, role: e.target.value })} 
+                  className="input-field pl-10" 
+                  placeholder="e.g. Orthodontist, Hygienist, Manager" 
+                  required 
+                />
+              </div>
             </div>
+
             <div>
               <label className="block font-medium mb-1">Full Name <span className="text-red-500">*</span></label>
               <input type="text" value={form.fullname} onChange={(e) => setForm({ ...form, fullname: e.target.value })} className="input-field" required />
             </div>
+            
             <div>
               <label className="block font-medium mb-1">Username <span className="text-red-500">*</span></label>
               <input type="text" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="input-field" required disabled={!!editing} />
             </div>
+            
             <div>
               <label className="block font-medium mb-1">Email <span className="text-red-500">*</span></label>
               <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="input-field" required />
             </div>
+            
             <div>
               <label className="block font-medium mb-1">Branch <span className="text-red-500">*</span></label>
               <select value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value })} className="input-field" required>
                 <option value="westgate">Westgate Mall</option>
                 <option value="newlands">Newlands Shopping Centre</option>
+                <option value="all">All Branches</option>
               </select>
             </div>
-            {form.role === 'doctor' && (
-              <div>
-                <label className="block font-medium mb-1">Specialization</label>
-                <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className="input-field" placeholder="e.g. Orthodontist" />
-              </div>
-            )}
             
-            {/* 👇 NEW IMAGE UPLOAD COMPONENT */}
+            <div>
+              <label className="block font-medium mb-1">Specialization (optional)</label>
+              <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className="input-field" placeholder="e.g. Braces & Aligners" />
+            </div>
+
             <div className="md:col-span-2 pt-2">
               <ImageUpload 
                 currentImage={form.profilePicture} 

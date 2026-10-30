@@ -23,7 +23,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group" onClick={() => setMenuOpen(false)}>
             <div className="flex items-center space-x-0.5 group-hover:scale-105 transition-transform duration-300">
-              <FaTooth className="text-dental-red transition-transform duration-300 group-hover:rotate-12" style={{ fontSize: '20px' }} />
+              <FaTooth className="text-dental-red transition-transform duration-300 group-hover:rotate-12" style={{ fontSize: '24px' }} />
               <FaTooth className="text-dental-red transition-transform duration-300 group-hover:rotate-12" style={{ fontSize: '28px' }} />
               <FaTooth className="text-dental-red transition-transform duration-300 group-hover:rotate-12" style={{ fontSize: '20px' }} />
             </div>

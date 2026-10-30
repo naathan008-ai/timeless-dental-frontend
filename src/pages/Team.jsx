@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { FaUserMd, FaUserTie, FaMapMarkerAlt, FaTooth } from 'react-icons/fa';
+import { FaUserMd, FaUserTie, FaMapMarkerAlt, FaTooth, FaGlobe } from 'react-icons/fa';
 
 const Team = () => {
   const [staff, setStaff] = useState([]);
@@ -21,13 +21,12 @@ const Team = () => {
     }
   };
 
-  const westgateStaff = staff.filter((s) => s.branch === 'westgate' || !s.branch);
+  const westgateStaff = staff.filter((s) => s.branch === 'westgate');
   const newlandsStaff = staff.filter((s) => s.branch === 'newlands');
+  const allBranchesStaff = staff.filter((s) => s.branch === 'all' || !s.branch);
 
   const StaffCard = ({ member }) => (
-    <div className="card text-center flex flex-col items-center group relative overflow-hidden">
-      <div className="absolute -top-10 -right-10 w-24 h-24 bg-red-50 dark:bg-red-900/20 rounded-full blur-2xl group-hover:bg-red-100 dark:group-hover:bg-red-900/40 transition-all duration-500"></div>
-      
+    <div className="card text-center flex flex-col items-center group relative overflow-hidden bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 border border-gray-100 dark:border-gray-700 hover:-translate-y-1 transition-all duration-300">
       <div className="w-24 h-24 rounded-full mb-4 shadow-inner relative z-10 overflow-hidden border-4 border-white dark:border-gray-700">
         {member.profilePicture ? (
           <img 
@@ -36,16 +35,12 @@ const Team = () => {
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.onerror = null; 
-              e.target.src = ''; // Fallback to icon if image fails to load
+              e.target.src = ''; 
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-50 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center">
-            {member.role === 'doctor' ? (
-              <FaUserMd className="text-4xl text-dental-red" />
-            ) : (
-              <FaUserTie className="text-4xl text-blue-600 dark:text-blue-400" />
-            )}
+          <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-50 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
+            <FaUserMd className="text-4xl text-dental-red" />
           </div>
         )}
       </div>
@@ -54,45 +49,41 @@ const Team = () => {
         {member.fullname}
       </h3>
       
-      <p className={`text-sm font-semibold uppercase tracking-wider mb-2 relative z-10 ${
-        member.role === 'doctor' ? 'text-dental-red' : 'text-blue-600 dark:text-blue-400'
-      }`}>
+      <p className="text-sm font-semibold uppercase tracking-wider mb-2 relative z-10 text-dental-red">
         {member.role}
       </p>
 
       {member.specialization && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-3 py-1 rounded-full relative z-10">
+        <p className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full relative z-10">
           {member.specialization}
         </p>
       )}
     </div>
   );
 
-  const BranchSection = ({ title, icon, staffList, colorClass }) => (
-    <div className="mb-16">
-      <div className="flex items-center gap-4 mb-8">
-        <div className={`p-4 rounded-2xl ${colorClass} text-white shadow-lg`}>
-          {icon}
-        </div>
-        <div>
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{title}</h2>
-          <p className="text-gray-500 dark:text-gray-400">Meet the team at this location</p>
-        </div>
-      </div>
+  const BranchSection = ({ title, icon, staffList, colorClass }) => {
+    if (staffList.length === 0) return null; // Don't show empty branches
 
-      {staffList.length === 0 ? (
-        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-8 text-center text-gray-500 dark:text-gray-400">
-          Our team for this branch is currently being updated. Please check back soon.
+    return (
+      <div className="mb-16">
+        <div className="flex items-center gap-4 mb-8">
+          <div className={`p-4 rounded-2xl ${colorClass} text-white shadow-lg`}>
+            {icon}
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{title}</h2>
+            <p className="text-gray-500 dark:text-gray-400">Meet the team at this location</p>
+          </div>
         </div>
-      ) : (
+
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {staffList.map((member) => (
             <StaffCard key={member._id} member={member} />
           ))}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl animate-fade-in">
@@ -126,6 +117,13 @@ const Team = () => {
             icon={<FaMapMarkerAlt className="text-2xl" />}
             staffList={newlandsStaff}
             colorClass="bg-gradient-to-br from-blue-500 to-indigo-600"
+          />
+
+          <BranchSection 
+            title="Head Office & All Branches" 
+            icon={<FaGlobe className="text-2xl" />}
+            staffList={allBranchesStaff}
+            colorClass="bg-gradient-to-br from-gray-700 to-gray-900"
           />
         </>
       )}
