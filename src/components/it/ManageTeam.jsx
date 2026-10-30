@@ -59,14 +59,14 @@ const ManageTeam = () => {
         toast.success('Team member added');
       }
       
-      // 👇 CLOSE MODAL IMMEDIATELY ON SUCCESS
+      // Close modal and refresh list immediately
       setShowModal(false);
       setEditing(null);
       setForm(emptyForm);
       fetchTeam();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Operation failed');
-      // Note: If it fails, we intentionally leave the modal open so you don't lose your data
+      toast.error(err.response?.data?.message || 'Failed to save. Check console.');
+      console.error(err); // Log for debugging
     }
   };
 
