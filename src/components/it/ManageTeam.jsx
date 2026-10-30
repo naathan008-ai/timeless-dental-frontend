@@ -13,7 +13,7 @@ const ManageTeam = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(''); // 👈 Tracks save errors
+  const [errorMsg, setErrorMsg] = useState('');
 
   const emptyForm = {
     fullname: '',
@@ -35,17 +35,19 @@ const ManageTeam = () => {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/api/users');
+      // 👇 USING THE NEW FAST ENDPOINT
+      const res = await api.get('/api/users/staff');
       
-      // 👇 FIXED: Case-insensitive filter so custom roles like "Hygienist" show up
-      const staff = res.data.filter(u => {
+      // Filter out IT admins so they don't show up in the public team manager
+      const filtered = res.data.filter(u => {
         const roleStr = u.role ? u.role.toLowerCase() : '';
-        return roleStr !== 'client' && roleStr !== 'it';
-      }).sort((a, b) => a.fullname.localeCompare(b.fullname));
+        return roleStr !== 'it';
+      });
       
-      setTeam(staff);
+      setTeam(filtered);
     } catch (err) {
       toast.error('Failed to load team members');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -53,7 +55,7 @@ const ManageTeam = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg(''); // Reset error
+    setErrorMsg(''); 
     if (!form.role.trim()) return toast.error('Please enter a role');
 
     try {
@@ -71,14 +73,13 @@ const ManageTeam = () => {
       fetchTeam();
     } catch (err) {
       console.error(err);
-      // 👇 Show exact error on screen if it fails (e.g., "Email already exists")
-      setErrorMsg(err.response?.data?.message || 'Server error. Please check console.');
+      setErrorMsg(err.response?.data?.message || 'Server error. Check the console for details.');
       toast.error('Failed to save');
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Remove this person from the team?')) return;
+    if (!window.confirm('Permanently remove this person from the team?')) return;
     try {
       await api.delete(`/api/users/${id}`);
       toast.success('Team member removed');
@@ -132,7 +133,7 @@ const ManageTeam = () => {
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
         {team.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">No team members yet.</p>
+          <p className="text-center text-gray-500 py-8">No team members found. Click "Add Team Member" to create one.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {team.map((member) => (
@@ -164,7 +165,7 @@ const ManageTeam = () => {
                   <button onClick={() => openEdit(member)} className="text-blue-600 hover:bg-blue-100 p-2 rounded-lg bg-white shadow-sm">
                     <FaEdit />
                   </button>
-                  <button onClick={() => handleDelete(member._id)} className="text-red-600 hover:bg-red-100 p-2 rounded-lg bg-white shadow-sm">
+                  <button onClick={() => handleDelete(member._id)} className="text-red-600 hover:bg-red-100 p-2 rounded-lg bg-white shadow-sm" title="Delete Team Member">
                     <FaTrash />
                   </button>
                 </div>
@@ -182,7 +183,6 @@ const ManageTeam = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           
-          {/* 👇 SHOW ERROR MESSAGE IF SAVE FAILS */}
           {errorMsg && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3">
               <FaExclamationTriangle className="text-xl flex-shrink-0" />
