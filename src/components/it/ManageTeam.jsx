@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaUserMd, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
+import { FaUserMd, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase, FaExclamationTriangle } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import ImageUpload from '../common/ImageUpload';
 
@@ -13,6 +13,7 @@ const ManageTeam = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(''); // 👈 Tracks save errors
 
   const emptyForm = {
     fullname: '',
@@ -35,9 +36,13 @@ const ManageTeam = () => {
     try {
       setLoading(true);
       const res = await api.get('/api/users');
-      const staff = res.data.filter(u => u.role !== 'client' && u.role !== 'it').sort((a, b) => 
-        a.fullname.localeCompare(b.fullname)
-      );
+      
+      // 👇 FIXED: Case-insensitive filter so custom roles like "Hygienist" show up
+      const staff = res.data.filter(u => {
+        const roleStr = u.role ? u.role.toLowerCase() : '';
+        return roleStr !== 'client' && roleStr !== 'it';
+      }).sort((a, b) => a.fullname.localeCompare(b.fullname));
+      
       setTeam(staff);
     } catch (err) {
       toast.error('Failed to load team members');
@@ -48,6 +53,7 @@ const ManageTeam = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg(''); // Reset error
     if (!form.role.trim()) return toast.error('Please enter a role');
 
     try {
@@ -59,14 +65,15 @@ const ManageTeam = () => {
         toast.success('Team member added');
       }
       
-      // Close modal and refresh list immediately
       setShowModal(false);
       setEditing(null);
       setForm(emptyForm);
       fetchTeam();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to save. Check console.');
-      console.error(err); // Log for debugging
+      console.error(err);
+      // 👇 Show exact error on screen if it fails (e.g., "Email already exists")
+      setErrorMsg(err.response?.data?.message || 'Server error. Please check console.');
+      toast.error('Failed to save');
     }
   };
 
@@ -83,6 +90,7 @@ const ManageTeam = () => {
 
   const openEdit = (member) => {
     setEditing(member);
+    setErrorMsg('');
     setForm({
       fullname: member.fullname || '',
       username: member.username || '',
@@ -113,6 +121,7 @@ const ManageTeam = () => {
           onClick={() => {
             setEditing(null);
             setForm(emptyForm);
+            setErrorMsg('');
             setShowModal(true);
           }}
           className="btn-primary flex items-center"
@@ -172,6 +181,15 @@ const ManageTeam = () => {
         maxWidth="max-w-2xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          
+          {/* 👇 SHOW ERROR MESSAGE IF SAVE FAILS */}
+          {errorMsg && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3">
+              <FaExclamationTriangle className="text-xl flex-shrink-0" />
+              <p className="text-sm font-medium">{errorMsg}</p>
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 gap-4">
             
             <div>
