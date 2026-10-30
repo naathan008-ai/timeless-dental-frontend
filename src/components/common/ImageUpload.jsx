@@ -8,7 +8,6 @@ const ImageUpload = ({ currentImage, onImageChange, label = "Profile Picture" })
     const file = e.target.files[0];
     if (!file) return;
 
-    // Check if it's an image
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file (jpg, png, etc).');
       return;
@@ -18,10 +17,9 @@ const ImageUpload = ({ currentImage, onImageChange, label = "Profile Picture" })
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
-        // Compress the image using Canvas
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 400;
-        const MAX_HEIGHT = 400;
+        const MAX_WIDTH = 500; // Increased slightly for better quality on large cards
+        const MAX_HEIGHT = 500;
         let width = img.width;
         let height = img.height;
 
@@ -42,8 +40,7 @@ const ImageUpload = ({ currentImage, onImageChange, label = "Profile Picture" })
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Convert to Base64 with 70% quality to keep it small
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
         onImageChange(compressedBase64);
       };
       img.src = event.target.result;
@@ -62,7 +59,6 @@ const ImageUpload = ({ currentImage, onImageChange, label = "Profile Picture" })
     <div>
       <label className="block font-medium mb-2">{label}</label>
       <div className="flex items-center gap-4">
-        {/* Image Preview */}
         <div className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-gray-800 relative group">
           {currentImage ? (
             <>
@@ -85,7 +81,6 @@ const ImageUpload = ({ currentImage, onImageChange, label = "Profile Picture" })
           )}
         </div>
 
-        {/* Upload Button */}
         <div>
           <input
             type="file"
@@ -101,7 +96,7 @@ const ImageUpload = ({ currentImage, onImageChange, label = "Profile Picture" })
           >
             Browse Image
           </button>
-          <p className="text-xs text-gray-500 mt-1">Max 400x400px (auto-resized)</p>
+          <p className="text-xs text-gray-500 mt-1">Max 500x500px (auto-resized)</p>
         </div>
       </div>
     </div>

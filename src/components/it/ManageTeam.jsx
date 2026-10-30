@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FaUsers, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase, FaExclamationTriangle } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaEdit, FaTrash, FaMapMarkerAlt, FaBriefcase, FaExclamationTriangle, FaPhone } from 'react-icons/fa';
 import Modal from '../common/Modal';
 import ImageUpload from '../common/ImageUpload';
 
@@ -18,6 +18,7 @@ const ManageTeam = () => {
   const emptyForm = {
     fullname: '',
     username: '',
+    phoneNumber: '',
     role: '',
     specialization: '',
     branch: 'westgate',
@@ -37,7 +38,6 @@ const ManageTeam = () => {
       setTeam(res.data);
     } catch (err) {
       toast.error('Failed to load team members');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -85,6 +85,7 @@ const ManageTeam = () => {
     setForm({
       fullname: member.fullname || '',
       username: member.username || '',
+      phoneNumber: member.phoneNumber || '',
       role: member.role || '',
       specialization: member.specialization || '',
       branch: member.branch || 'westgate',
@@ -204,6 +205,14 @@ const ManageTeam = () => {
               <label className="block font-medium mb-1">Username (optional)</label>
               <input type="text" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="input-field" />
             </div>
+
+            <div>
+              <label className="block font-medium mb-1">Phone Number (optional)</label>
+              <div className="relative">
+                <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input type="text" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} className="input-field pl-10" placeholder="+263 77..." />
+              </div>
+            </div>
             
             <div>
               <label className="block font-medium mb-1">Branch <span className="text-red-500">*</span></label>
@@ -214,7 +223,7 @@ const ManageTeam = () => {
               </select>
             </div>
             
-            <div className="md:col-span-2">
+            <div>
               <label className="block font-medium mb-1">Specialization (optional)</label>
               <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className="input-field" placeholder="e.g. Braces & Aligners" />
             </div>

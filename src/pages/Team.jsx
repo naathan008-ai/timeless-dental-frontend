@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { FaUserMd, FaMapMarkerAlt, FaTooth, FaGlobe, FaInfoCircle, FaTimes } from 'react-icons/fa';
+import { FaUserMd, FaMapMarkerAlt, FaTooth, FaGlobe, FaInfoCircle, FaTimes, FaPhone, FaUser } from 'react-icons/fa';
 
 const branchLabel = (b) =>
   b === 'westgate' ? 'Westgate Mall' : b === 'newlands' ? 'Newlands Shopping Centre' : b === 'all' ? 'All Branches' : 'Unassigned';
@@ -16,7 +16,6 @@ const Team = () => {
 
   const fetchStaff = async () => {
     try {
-      // 👇 NEW PUBLIC ENDPOINT
       const res = await api.get('/api/team/public');
       setStaff(res.data);
     } catch (err) {
@@ -33,34 +32,45 @@ const Team = () => {
   const StaffCard = ({ member }) => (
     <div 
       onClick={() => setSelectedMember(member)}
-      className="cursor-pointer card text-center flex flex-col items-center group relative overflow-hidden bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 border border-gray-100 dark:border-gray-700 hover:-translate-y-1 transition-all duration-300 hover:shadow-glow"
+      className="relative overflow-hidden rounded-3xl h-[400px] w-full cursor-pointer group shadow-xl border border-gray-200 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300"
     >
-      <div className="w-24 h-24 rounded-full mb-4 shadow-inner relative z-10 overflow-hidden border-4 border-white dark:border-gray-700">
-        {member.profilePicture ? (
-          <img 
-            src={member.profilePicture} 
-            alt={member.fullname} 
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-50 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
-            <FaUserMd className="text-4xl text-dental-red" />
-          </div>
-        )}
-      </div>
-
-      <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1 relative z-10">{member.fullname}</h3>
-      <p className="text-sm font-semibold uppercase tracking-wider mb-2 relative z-10 text-dental-red">{member.role}</p>
-      
-      {member.specialization && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full relative z-10">
-          {member.specialization}
-        </p>
+      {member.profilePicture ? (
+        <img 
+          src={member.profilePicture} 
+          alt={member.fullname} 
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+          <FaUserMd className="text-7xl text-dental-red opacity-50" />
+        </div>
       )}
 
-      <div className="mt-4 text-xs font-semibold text-gray-400 flex items-center gap-1 group-hover:text-dental-red transition-colors">
-        <FaInfoCircle /> View Profile
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+      <div className="absolute bottom-0 left-0 right-0 p-5 bg-white/10 dark:bg-black/40 backdrop-blur-md border-t border-white/20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+        <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-md">
+          {member.fullname}
+        </h3>
+        <p className="text-sm font-bold uppercase tracking-wider text-red-400 drop-shadow-md">
+          {member.role}
+        </p>
+        
+        <div className="flex flex-wrap items-center gap-2 mt-2">
+          <span className="text-xs font-medium text-white/90 bg-white/20 px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
+            <FaMapMarkerAlt /> {branchLabel(member.branch)}
+          </span>
+          {member.specialization && (
+            <span className="text-xs font-medium text-white/90 bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+              {member.specialization}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="absolute top-4 right-4 bg-white/30 backdrop-blur-md p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+        <FaInfoCircle />
       </div>
     </div>
   );
@@ -77,7 +87,7 @@ const Team = () => {
             <p className="text-gray-500 dark:text-gray-400">Meet the team at this location</p>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {staffList.map((member) => (
             <StaffCard key={member._id} member={member} />
           ))}
@@ -108,43 +118,49 @@ const Team = () => {
         </>
       )}
 
-      {/* Profile Modal */}
       {selectedMember && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fade-in">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative">
-            <button 
-              onClick={() => setSelectedMember(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-red-500 bg-gray-100 dark:bg-gray-700 p-2 rounded-full transition-colors"
-            >
-              <FaTimes />
-            </button>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fade-in">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl relative">
+            
+            <div className="h-48 w-full relative">
+              {selectedMember.profilePicture ? (
+                <img src={selectedMember.profilePicture} alt={selectedMember.fullname} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-red-50 dark:bg-gray-900 flex items-center justify-center">
+                  <FaUserMd className="text-6xl text-dental-red" />
+                </div>
+              )}
+              <button 
+                onClick={() => setSelectedMember(null)}
+                className="absolute top-4 right-4 text-white hover:text-red-500 bg-black/50 p-2 rounded-full backdrop-blur-md transition-colors"
+              >
+                <FaTimes />
+              </button>
+            </div>
 
-            <div className="flex flex-col items-center mt-2">
-              <div className="w-32 h-32 rounded-full overflow-hidden mb-4 shadow-lg border-4 border-dental-red">
-                {selectedMember.profilePicture ? (
-                  <img src={selectedMember.profilePicture} alt={selectedMember.fullname} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-red-50 flex items-center justify-center">
-                    <FaUserMd className="text-5xl text-dental-red" />
+            <div className="p-6 relative">
+              <div className="absolute -top-10 left-6 right-6 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg text-center border border-gray-100 dark:border-gray-700">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{selectedMember.fullname}</h2>
+                <p className="text-dental-red font-bold uppercase tracking-wider text-sm mt-1">{selectedMember.role}</p>
+              </div>
+
+              <div className="mt-10 space-y-4">
+                {selectedMember.specialization && (
+                  <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl">
+                    <FaUser className="text-dental-red text-lg mr-3" />
+                    <span className="font-medium">{selectedMember.specialization}</span>
                   </div>
                 )}
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{selectedMember.fullname}</h2>
-              <p className="text-dental-red font-bold uppercase tracking-wider text-sm mt-1">{selectedMember.role}</p>
-              
-              {selectedMember.specialization && (
-                <span className="text-xs bg-red-50 text-dental-red px-3 py-1 rounded-full mt-2 font-medium">
-                  {selectedMember.specialization}
-                </span>
-              )}
-
-              <div className="w-full h-px bg-gray-200 dark:bg-gray-700 my-6"></div>
-
-              <div className="w-full space-y-4">
                 <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl">
                   <FaMapMarkerAlt className="text-dental-red text-lg mr-3" />
                   <span className="font-medium">{branchLabel(selectedMember.branch)}</span>
                 </div>
+                {selectedMember.phoneNumber && (
+                  <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl">
+                    <FaPhone className="text-dental-red text-lg mr-3" />
+                    <span className="font-medium">{selectedMember.phoneNumber}</span>
+                  </div>
+                )}
                 {selectedMember.username && (
                   <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl">
                     <FaInfoCircle className="text-dental-red text-lg mr-3" />
