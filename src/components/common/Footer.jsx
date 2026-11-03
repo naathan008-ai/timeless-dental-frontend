@@ -23,7 +23,7 @@ const Footer = () => {
                 className="text-gray-400 hover:text-red-400 transition"
                 aria-label="Facebook"
               >
-                <FaFacebook size={22} />
+                <FaFacebook size={25} />
               </a>
               <a
                 href="https://www.instagram.com/timeless_dental/"
@@ -32,7 +32,7 @@ const Footer = () => {
                 className="text-gray-400 hover:text-red-400 transition"
                 aria-label="Instagram"
               >
-                <FaInstagram size={22} />
+                <FaInstagram size={25} />
               </a>
               <a
                 href="#"
@@ -41,7 +41,7 @@ const Footer = () => {
                 className="text-gray-400 hover:text-red-400 transition"
                 aria-label="TikTok"
               >
-                <FaTiktok size={22} />
+                <FaTiktok size={25} />
               </a>
             </div>
           </div>
@@ -52,16 +52,17 @@ const Footer = () => {
             <ul className="space-y-3 text-gray-400">
               <li className="flex items-start space-x-3">
                 <FaPhone className="text-red-400 mt-1" />
-                <span>(024)2333271</span>
+                <span>(024)2333271 (Westgate)</span>
+              </li>
+               <li className="flex items-start space-x-3">
+                <FaPhone className="text-red-400 mt-1" />
+                <span>(024)2746995 (Newlands)</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-red-400 mt-1" />
-                <span>info@timelessdental.com</span>
+                <span>timelessdentalclinic@gmail.com</span>
               </li>
-              <li className="flex items-start space-x-3">
-                <FaMapMarkerAlt className="text-red-400 mt-1" />
-                <span>Westgate Mall, Harare</span>
-              </li>
+             
             </ul>
           </div>
 

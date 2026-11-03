@@ -11,8 +11,8 @@ const AIChat = () => {
     {
       role: 'assistant',
       content: isAuthenticated
-        ? `Hello ${user?.fullname || user?.username || ''}! 👋 I'm your dental AI assistant. How can I help you today?`
-        : "Hello! 👋 I'm the Timeless Dental AI assistant. I can answer questions about dental care, our services, and general dental advice. How can I help you today?",
+        ? `Hello ${user?.fullname || user?.username || ''}! I'm your dental AI assistant. How can I help you today?`
+        : "Hello! I'm the Timeless Dental AI assistant. How may I help you today?",
     },
   ]);
   const [input, setInput] = useState('');
@@ -66,7 +66,7 @@ const AIChat = () => {
         message: messages[messages.length - 1]?.content,
       });
       toast.success('Request sent to receptionist');
-      setMessages((prev) => [...prev, { role: 'system', content: '✅ Request sent to receptionist.' }]);
+      setMessages((prev) => [...prev, { role: 'system', content: ' Request sent to receptionist.' }]);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Transfer failed');
     }
@@ -101,7 +101,7 @@ const AIChat = () => {
           <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-2 text-sm text-yellow-800 flex items-center">
             <FaLock className="mr-2" />
             <span>
-              You're chatting as a guest. To book appointments or talk to a receptionist,{' '}
+              You're chatting as a guest. To book appointments or talk to a human ,{' '}
               <Link to="/login" className="font-semibold underline">
                 log in
               </Link>{' '}
@@ -137,7 +137,7 @@ const AIChat = () => {
           {loading && (
             <div className="flex items-center space-x-2 text-gray-500">
               <div className="spinner w-4 h-4"></div>
-              <span>AI is thinking...</span>
+              <span>Thinking...</span>
             </div>
           )}
           <div ref={bottomRef} />
@@ -182,9 +182,9 @@ const AIChat = () => {
       {/* Info banner */}
       <div className="mt-6 bg-red-50 border border-red-200 rounded-2xl p-4 max-w-3xl mx-auto">
         <div className="flex items-start space-x-3">
-          <FaTooth className="text-red-600 text-xl mt-1" />
-          <div className="text-sm text-red-800">
-            <p className="font-semibold">💡 Emergency Notice</p>
+          <FaTooth className="text-white-800 text-xl mt-1" />
+          <div className="text-sm text-white-800">
+            <p className="font-semibold"> Emergency Notice</p>
             <p>For dental emergencies, call <strong> (024)2333271</strong> immediately.</p>
           </div>
         </div>
